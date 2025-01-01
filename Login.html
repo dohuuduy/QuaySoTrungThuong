@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #loginForm {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        #loginForm h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #loginForm input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        #loginForm button {
+            width: 100%;
+            padding: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #loginForm button:hover {
+            background: #45a049;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loginForm">
+        <form onsubmit="return login()">
+            <h2>Đăng Nhập</h2>
+            <input type="text" id="username" placeholder="Tên đăng nhập" required>
+            <input type="password" id="password" placeholder="Mật khẩu" required>
+            <button type="submit">Đăng nhập</button>
+            <p class="error-message" id="errorMessage"></p>
+        </form>
+    </div>
+
+    <script>
+        const region = 'api'; // Ví dụ: 'www' hoặc 'api', tùy thuộc vào cấu hình AppSheet.
+        const appId = '1aa9c9a1-1792-412c-b21a-cceeeb78c269';
+        const apiKey = 'V2-qMcxL-PdTKn-6Y26p-LyQgo-tS9t9-vxeni-RGFOK-RkLMu';
+
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            const tableName = 'KhachHang';
+            const apiUrl = `https://${region}.appsheet.com/api/v2/apps/${appId}/tables/${tableName}/Action`;
+
+            try {
+                // Gọi API AppSheet
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'ApplicationAccessKey': apiKey
+                    },
+                    body: JSON.stringify({
+                        Action: 'Find',
+                        Properties: {
+                            Selector: `Filter(${tableName}, [TaiKhoan] = "${username}" AND [MatKhau] = "${password}")`
+                        },
+                        Rows: []
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Không thể kết nối đến hệ thống.');
+                }
+
+                const data = await response.json();
+
+                if (!data || data.Rows.length === 0) {
+                    errorMessage.textContent = 'Sai tài khoản hoặc mật khẩu!';
+                    errorMessage.style.display = 'block';
+                } else {
+                    const user = data.Rows[0];
+                    localStorage.setItem('user', JSON.stringify(user));
+
+                    // Điều hướng dựa vào quyền hạn
+                    if (user.isAdmin) {
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        window.location.href = 'tracuu.html';
+                    }
+                }
+            } catch (error) {
+                console.error(error);
+                errorMessage.textContent = 'Đã xảy ra lỗi. Vui lòng thử lại!';
+                errorMessage.style.display = 'block';
+            }
+
+            return false; // Ngăn form reload
+        }
+    </script>
+</body>
+
+</html>
