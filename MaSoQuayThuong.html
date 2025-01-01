@@ -1,1 +1,199 @@
 
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh Sách Mã Số Quay Thưởng</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e9f4ff;
+        }
+
+        .navbar {
+            background-color: #007bff;
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar .logo {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .navbar .back-btn {
+            font-size: 14px;
+            cursor: pointer;
+            background-color: white;
+            color: #007bff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .navbar .back-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        .container {
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 1200px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th,
+        table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        table th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .loading {
+            text-align: center;
+            font-size: 16px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">Danh Sách Mã Số Quay Thưởng</div>
+        <button class="back-btn" onclick="goBack()">Quay lại</button>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+        <h1>Danh Sách Mã Số Quay Thưởng</h1>
+        <div id="loading" class="loading">Đang tải dữ liệu...</div>
+        <table id="dataTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Mã Số Quay Thưởng</th>
+                    <th>Mã Giải Thưởng</th>
+                    <th>Mã Khách Hàng</th>
+                    <th>Ghi Chú</th>
+                    <th>Ngày Cấp</th>
+                    <th>Người Cấp</th>
+                    <th>Tình Trạng Quay</th>
+                    <th>Kết Quả Quay</th>
+                    <th>Ngày Cập Nhật</th>
+                    <th>Người Cập Nhật</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        const APP_ID = '1aa9c9a1-1792-412c-b21a-cceeeb78c269';
+        const API_KEY = 'V2-qMcxL-PdTKn-6Y26p-LyQgo-tS9t9-vxeni-RGFOK-RkLMu';
+
+        // Go back to dashboard
+        function goBack() {
+            window.location.href = 'dashboard.html';
+        }
+
+        // Load data from API
+        async function loadData() {
+            const apiUrl = `https://www.appsheet.com/api/v2/apps/${APP_ID}/tables/MaSoQuayThuong/Action`;
+            const loadingElement = document.getElementById('loading');
+            const tableElement = document.getElementById('dataTable');
+            const tableBody = tableElement.querySelector('tbody');
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'ApplicationAccessKey': API_KEY,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        Action: 'Find',
+                        Rows: []
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Không thể tải dữ liệu từ API');
+                }
+
+                const data = await response.json();
+                const rows = data.Rows;
+
+                if (!rows || rows.length === 0) {
+                    loadingElement.textContent = 'Không có dữ liệu để hiển thị.';
+                    return;
+                }
+
+                loadingElement.style.display = 'none';
+                tableElement.style.display = 'table';
+
+                rows.forEach((row, index) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${row.MaSoQuayThuong || ''}</td>
+                        <td>${row.MaGiaiThuong || ''}</td>
+                        <td>${row.MaKhachHang || ''}</td>
+                        <td>${row.GhiChu || ''}</td>
+                        <td>${row.NgayCap || ''}</td>
+                        <td>${row.NguoiCap || ''}</td>
+                        <td>${row.TinhTrangQuay || ''}</td>
+                        <td>${row.KetQuaQuay || ''}</td>
+                        <td>${row.NgayCapNhat || ''}</td>
+                        <td>${row.NguoiCapNhat || ''}</td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error('Lỗi khi tải dữ liệu:', error);
+                loadingElement.textContent = 'Đã xảy ra lỗi khi tải dữ liệu.';
+            }
+        }
+
+        // Load data on page load
+        loadData();
+    </script>
+</body>
+
+</html>
