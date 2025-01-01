@@ -248,6 +248,36 @@
                 margin: 10% auto;
             }
         }
+		.nav-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 0.8rem 1.2rem;
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(52, 152, 219, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .nav-button {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
     </style>
 </head>
 
@@ -256,6 +286,9 @@
         <header class="header">
             <h1>Danh sách dự thưởng</h1>
         </header>
+		    <button onclick="window.location.href='Dashboard.html'" class="nav-button">
+        <i class="fas fa-arrow-left"></i> Dashboard
+    </button>
 
         <div id="errorMessage" class="error-message"></div>
 
