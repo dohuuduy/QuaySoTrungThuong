@@ -4,174 +4,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Dashboard - Quay Số Trúng Thưởng</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
+        /* General Style */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
             margin: 0;
             padding: 0;
+            background-color: #e9f4ff;
         }
 
-        header {
-            background-color: #4CAF50;
+        /* Navbar */
+        .navbar {
+            background-color: #007bff;
             color: white;
-            padding: 10px 20px;
-            text-align: center;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        header h1 {
-            margin: 0;
+        .navbar .logo {
+            font-size: 20px;
+            font-weight: bold;
         }
 
-        .container {
+        .navbar .login-btn {
+            font-size: 14px;
+            cursor: pointer;
+            background-color: white;
+            color: #007bff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .navbar .login-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: #004085;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            padding-top: 2rem;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+
+        .sidebar a {
+            padding: 10px 15px;
+            display: block;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #007bff;
+        }
+
+        .sidebar .active {
+            background-color: #007bff;
+        }
+
+        /* Toggle Button */
+        .toggle-btn {
+            position: fixed;
+            top: 1.5rem;
+            left: 1rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .toggle-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
             padding: 20px;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .main-content.collapsed {
+            margin-left: 0;
+        }
+
+        /* Card Style */
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
         }
 
         .card {
             background-color: white;
+            width: 300px;
+            padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-bottom: 20px;
+            text-align: center;
+            flex: 1;
         }
 
         .card h2 {
-            margin: 0 0 10px;
-            font-size: 18px;
-            color: #333;
+            margin: 0;
+            font-size: 24px;
+            color: #007bff;
         }
 
         .card p {
-            margin: 0;
-            font-size: 14px;
-            color: #666;
-        }
-
-        .btn-container {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 10px 15px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            text-align: center;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .btn:hover {
-            background-color: #45a049;
-        }
-
-        .logout {
-            background-color: #f44336;
-        }
-
-        .logout:hover {
-            background-color: #e41e1e;
-        }
-
-        .stats {
-            display: flex;
-            gap: 10px;
-            justify-content: space-around;
-            margin-top: 20px;
-        }
-
-        .stat-card {
-            flex: 1;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .stat-card h3 {
-            font-size: 36px;
-            margin: 0;
-            color: #4CAF50;
-        }
-
-        .stat-card p {
             margin: 10px 0 0;
-            font-size: 14px;
+            font-size: 16px;
             color: #666;
         }
     </style>
 </head>
 
 <body>
-    <header>
-        <h1>Dashboard Admin</h1>
-    </header>
-    <div class="container">
-        <div class="stats">
-            <div class="stat-card">
-                <h3 id="totalCustomers">0</h3>
+    <!-- Toggle Sidebar Button -->
+    <button class="toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">Quay Số Trúng Thưởng</div>
+        <button class="login-btn" onclick="goToLogin()">Đăng nhập</button>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <a href="dashboard.html" class="active"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="ma-du-thuong.html"><i class="fas fa-list"></i> Danh sách mã dự thưởng</a>
+        <a href="giai-thuong.html"><i class="fas fa-gift"></i> Tổng quan giải thưởng</a>
+        <a href="quay-so.html"><i class="fas fa-random"></i> Quay số trúng thưởng</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <h1>Dashboard</h1>
+        <div class="card-container">
+            <div class="card">
+                <h2 id="totalCustomers">0</h2>
                 <p>Tổng số khách hàng</p>
             </div>
-            <div class="stat-card">
-                <h3 id="totalTickets">0</h3>
+            <div class="card">
+                <h2 id="totalTickets">0</h2>
                 <p>Tổng số mã dự thưởng</p>
             </div>
-            <div class="stat-card">
-                <h3 id="totalPrizes">0</h3>
-                <p>Số giải thưởng</p>
+            <div class="card">
+                <h2 id="totalPrizes">0</h2>
+                <p>Số giải thưởng đã phát</p>
             </div>
-        </div>
-
-        <div class="btn-container">
-            <a href="tracuu.html" class="btn">Danh sách mã số dự thưởng</a>
-            <a href="quayso.html" class="btn">Quay số trúng thưởng</a>
-            <button class="btn logout" onclick="logout()">Đăng xuất</button>
         </div>
     </div>
 
     <script>
-        const region = 'api'; // Ví dụ: 'www' hoặc 'api'
-        const appId = '1aa9c9a1-1792-412c-b21a-cceeeb78c269';
-        const apiKey = 'V2-qMcxL-PdTKn-6Y26p-LyQgo-tS9t9-vxeni-RGFOK-RkLMu';
+        const APP_ID = '1aa9c9a1-1792-412c-b21a-cceeeb78c269';
+        const API_KEY = 'V2-qMcxL-PdTKn-6Y26p-LyQgo-tS9t9-vxeni-RGFOK-RkLMu';
 
+        // Fetch stats data
         async function fetchStats() {
-            const customersUrl = `https://${region}.appsheet.com/api/v2/apps/${appId}/tables/KhachHang/Action`;
-            const ticketsUrl = `https://${region}.appsheet.com/api/v2/apps/${appId}/tables/MaSoQuayThuong/Action`;
-            const prizesUrl = `https://${region}.appsheet.com/api/v2/apps/${appId}/tables/GiaiThuong/Action`;
-
             try {
                 const [customersResponse, ticketsResponse, prizesResponse] = await Promise.all([
-                    fetch(customersUrl, {
+                    fetch(`https://www.appsheet.com/api/v2/apps/${APP_ID}/tables/KhachHang/Action`, {
                         method: 'POST',
                         headers: {
+                            'ApplicationAccessKey': API_KEY,
                             'Content-Type': 'application/json',
-                            'ApplicationAccessKey': apiKey
                         },
-                        body: JSON.stringify({ Action: 'Find', Rows: [] })
+                        body: JSON.stringify({ Action: 'Find', Rows: [] }),
                     }),
-                    fetch(ticketsUrl, {
+                    fetch(`https://www.appsheet.com/api/v2/apps/${APP_ID}/tables/MaSoQuayThuong/Action`, {
                         method: 'POST',
                         headers: {
+                            'ApplicationAccessKey': API_KEY,
                             'Content-Type': 'application/json',
-                            'ApplicationAccessKey': apiKey
                         },
-                        body: JSON.stringify({ Action: 'Find', Rows: [] })
+                        body: JSON.stringify({ Action: 'Find', Rows: [] }),
                     }),
-                    fetch(prizesUrl, {
+                    fetch(`https://www.appsheet.com/api/v2/apps/${APP_ID}/tables/GiaiThuong/Action`, {
                         method: 'POST',
                         headers: {
+                            'ApplicationAccessKey': API_KEY,
                             'Content-Type': 'application/json',
-                            'ApplicationAccessKey': apiKey
                         },
-                        body: JSON.stringify({ Action: 'Find', Rows: [] })
-                    })
+                        body: JSON.stringify({ Action: 'Find', Rows: [] }),
+                    }),
                 ]);
 
                 const customersData = await customersResponse.json();
@@ -186,19 +227,21 @@
             }
         }
 
-        function logout() {
-            localStorage.removeItem('user');
+        // Toggle sidebar visibility
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            sidebar.classList.toggle('hidden');
+            mainContent.classList.toggle('collapsed');
+        }
+
+        // Go to login page
+        function goToLogin() {
             window.location.href = 'login.html';
         }
 
-        // Kiểm tra nếu người dùng đã đăng nhập
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (!user || !user.isAdmin) {
-            alert('Bạn không có quyền truy cập vào trang này.');
-            window.location.href = 'login.html';
-        } else {
-            fetchStats();
-        }
+        // Load statistics
+        fetchStats();
     </script>
 </body>
 
