@@ -5,11 +5,277 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ Thống Tra Cứu Quay Thưởng</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load resources first -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?v=3.4.1"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Define JavaScript variables and functions -->
+    <script>
+        // Global variables
+        var appId = '1aa9c9a1-1792-412c-b21a-cceeeb78c269';
+        var accessKey = 'V2-qMcxL-PdTKn-6Y26p-LyQgo-tS9t9-vxeni-RGFOK-RkLMu';
+        var region = 'www';
+        var tableName = 'MaSoQuayThuong';
+        var customerTableName = 'KhachHang';
+
+        // API Request Function
+        function apiRequest(action, data, table = tableName) {
+            var apiUrl = `https://${region}.appsheet.com/api/v2/apps/${appId}/tables/${table}/Action`;
+            return $.ajax({
+                url: apiUrl,
+                method: 'POST',
+                headers: {
+                    'ApplicationAccessKey': accessKey,
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify({
+                    Action: action,
+                    Properties: {
+                        Locale: 'vi-VN',
+                        Timezone: 'Asia/Ho_Chi_Minh'
+                    },
+                    ...data
+                })
+            });
+        }
+
+        // Get Customer Details Function
+// Get Customer Details Function
+async function getCustomerDetails(customerId) {
+    try {
+        const response = await apiRequest('Find', {
+            Selector: {
+                Filter: `[MaKhachHang] = '${customerId}'`
+            }
+        }, customerTableName);
+
+        if (response && response.length > 0) {
+            // Lọc kết quả để đảm bảo chính xác mã khách hàng
+            const exactMatch = response.find(customer => 
+                customer.MaKhachHang && 
+                customer.MaKhachHang.toLowerCase() === customerId.toLowerCase()
+            );
+            
+            return exactMatch || null;
+        }
+        return null;
+    } catch (error) {
+        console.error("Lỗi khi lấy thông tin khách hàng:", error);
+        return null;
+    }
+}
+
+        // Display Customer Details Function
+        function displayCustomerDetails(customerData) {
+            var detailsDiv = document.getElementById('customerDetails');
+            var nameInput = document.getElementById('customerName');
+            var phoneInput = document.getElementById('customerPhone');
+
+            if (customerData) {
+                nameInput.value = customerData.HoTenKhachHang || 'Không có thông tin';
+                phoneInput.value = customerData.SoDienThoai || 'Không có thông tin';
+                detailsDiv.classList.remove('hidden');
+            } else {
+                detailsDiv.classList.add('hidden');
+                nameInput.value = '';
+                phoneInput.value = '';
+            }
+        }
+
+        // Date Formatting Function
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            var date = new Date(dateString);
+            return date.toLocaleDateString('vi-VN', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Display Customer Info Function
+        function displayCustomerInfo(data) {
+            var infoDiv = document.getElementById('customerInfo');
+            
+            var sortedData = data.sort(function(a, b) {
+                return new Date(b.NgayCap) - new Date(a.NgayCap);
+            });
+            
+            var total = data.length;
+            
+            var html = `
+                <div class="p-6 bg-white/95 rounded-xl shadow-lg animate-fade-in">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                        Thông tin mã số quay thưởng của khách hàng
+                        <span class="text-blue-600">(${total} mã)</span>
+                    </h3>
+                    <div class="table-container">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead>
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Mã Số Quay Thưởng
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Mã Giải Thưởng
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Tình Trạng Quay
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Kết Quả Quay
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Ngày Cấp
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Ngày Cập Nhật
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Người Cấp
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Ghi Chú
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">`;
+
+            sortedData.forEach(function(item, index) {
+                var rowClass = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+                html += `
+                    <tr class="${rowClass} hover:bg-gray-100 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            ${item.MaSoQuayThuong || ''}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                            ${item.MaGiaiThuong || ''}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                            ${item.TinhTrangQuay || ''}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                            ${item.KetQuaQuay || 'Chưa có kết quả'}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                            ${formatDate(item.NgayCap)}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                            ${formatDate(item.NgayCapNhat)}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                            ${item.NguoiCap || ''}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-700">
+                            ${item.GhiChu || ''}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            
+            infoDiv.innerHTML = html;
+            infoDiv.classList.remove('hidden');
+        }
+
+        // Show Notification Function
+        function showNotification(message, type) {
+            var notificationDiv = document.getElementById('notification');
+            var bgColor = type === 'success' ? 'bg-green-100' :
+                type === 'error' ? 'bg-red-100' : 'bg-blue-100';
+            var textColor = type === 'success' ? 'text-green-700' :
+                type === 'error' ? 'text-red-700' : 'text-blue-700';
+            var icon = type === 'success' ? 'fa-check-circle' :
+                type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+
+            notificationDiv.innerHTML = `
+                <div class="p-4 rounded-xl text-center ${bgColor} ${textColor} animate-fade-in">
+                    <i class="fas ${icon} mr-2"></i>
+                    ${message}
+                </div>
+            `;
+            notificationDiv.classList.remove('hidden');
+
+            setTimeout(function() {
+                notificationDiv.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Check Customer ID Function
+        async function checkCustomerId() {
+            var customerInput = document.getElementById("customerId").value.trim();
+            var confirmButton = document.getElementById("confirmButton");
+            var spinner = document.getElementById("spinner");
+            var buttonText = document.querySelector(".button-text");
+
+            if (!customerInput) {
+                showNotification("Vui lòng nhập mã khách hàng.", "error");
+                return;
+            }
+
+            // Disable button and show spinner
+            confirmButton.disabled = true;
+            spinner.classList.remove("hidden");
+            buttonText.classList.add("hidden");
+
+            try {
+                // Get customer details first
+                const customerDetails = await getCustomerDetails(customerInput);
+                displayCustomerDetails(customerDetails);
+
+                // Get reward codes
+                const response = await apiRequest('Find', {
+                    Selector: {
+                        Filter: `[MaKhachHang] = '${customerInput}'`
+                    }
+                });
+
+                // Filter exact matches
+                const filteredResults = response.filter(function(item) {
+                    return item.MaKhachHang && item.MaKhachHang.toLowerCase() === customerInput.toLowerCase();
+                });
+
+                if (filteredResults && filteredResults.length > 0) {
+                    showNotification(`Tìm thấy ${filteredResults.length} mã số quay thưởng.`, "success");
+                    displayCustomerInfo(filteredResults);
+                } else {
+                    showNotification("Không tìm thấy thông tin mã số quay thưởng.", "error");
+                    document.getElementById('customerInfo').classList.add('hidden');
+                }
+            } catch (error) {
+                console.error("Lỗi:", error);
+                showNotification("Lỗi kết nối đến hệ thống. Vui lòng thử lại sau.", "error");
+            }
+
+            // Enable button and hide spinner
+            confirmButton.disabled = false;
+            spinner.classList.remove("hidden");
+            buttonText.classList.remove("hidden");
+        }
+
+        // Add event listeners when document is ready
+        $(document).ready(function() {
+            // Add Enter key event listener
+            $('#customerId').on('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    checkCustomerId();
+                }
+            });
+        });
+    </script>
+
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -76,7 +342,7 @@
 
 <body class="min-h-screen flex items-center justify-center p-4 md:p-6">
     <div class="content-container">
-        <!-- Phần Header -->
+        <!-- Header Section -->
         <div class="text-center mb-10 animate-fade-in">
             <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
                 HỆ THỐNG TRA CỨU QUAY THƯỞNG
@@ -84,11 +350,11 @@
             <p class="text-white/90 text-lg md:text-xl font-medium">
                 Nhập mã khách hàng để tra cứu thông tin quay thưởng
             </p>
-        </div>
+			</div>
 
-        <!-- Container Chính -->
+        <!-- Main Container -->
         <div class="glass-effect rounded-3xl p-6 md:p-8 shadow-2xl animate-fade-in">
-            <!-- Phần Input -->
+            <!-- Input Section -->
             <div class="max-w-xl mx-auto mb-10">
                 <label class="block text-white text-sm font-medium mb-3">Mã Khách Hàng</label>
                 <div class="relative">
@@ -97,6 +363,23 @@
                            class="w-full px-5 py-4 rounded-xl bg-white/90 text-gray-800 text-lg 
                                   focus:outline-none input-focus transition-all duration-300
                                   border border-transparent focus:border-green-300">
+                    
+                    <!-- Customer Info Section -->
+                    <div id="customerDetails" class="mt-4 p-4 bg-white/90 rounded-xl hidden">
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-gray-600 text-sm font-medium mb-1">Họ và Tên Khách Hàng</label>
+                                <input id="customerName" type="text" readonly
+                                       class="w-full px-4 py-2 rounded-lg bg-gray-50 text-gray-800 border border-gray-200">
+                            </div>
+                            <div>
+                                <label class="block text-gray-600 text-sm font-medium mb-1">Số Điện Thoại</label>
+                                <input id="customerPhone" type="text" readonly
+                                       class="w-full px-4 py-2 rounded-lg bg-gray-50 text-gray-800 border border-gray-200">
+                            </div>
+                        </div>
+                    </div>
+                    
                     <button id="confirmButton" onclick="checkCustomerId()" 
                             class="mt-4 w-full px-6 py-4 bg-[#008A3C] hover:bg-[#006b2d] text-white 
                                    font-semibold rounded-xl shadow-lg transition-all duration-300
@@ -110,7 +393,7 @@
                 <div id="notification" class="hidden mt-4 animate-fade-in"></div>
             </div>
 
-            <!-- Phần Kết Quả -->
+            <!-- Results Section -->
             <div id="customerInfo" class="hidden mt-6 animate-fade-in overflow-hidden"></div>
         </div>
 
@@ -119,222 +402,5 @@
             <p>© 2024 Hệ Thống Tra Cứu Quay Thưởng.</p>
         </footer>
     </div>
-
-    <script>
-        const appId = '1aa9c9a1-1792-412c-b21a-cceeeb78c269';
-        const accessKey = 'V2-qMcxL-PdTKn-6Y26p-LyQgo-tS9t9-vxeni-RGFOK-RkLMu';
-        const region = 'www';
-        const tableName = 'MaSoQuayThuong';
-
-        // Hàm gọi API
-        async function apiRequest(action, data) {
-            const apiUrl = `https://${region}.appsheet.com/api/v2/apps/${appId}/tables/${tableName}/Action`;
-            try {
-                const response = await $.ajax({
-                    url: apiUrl,
-                    method: 'POST',
-                    headers: {
-                        'ApplicationAccessKey': accessKey,
-                        'Content-Type': 'application/json'
-                    },
-                    data: JSON.stringify({
-                        Action: action,
-                        Properties: {
-                            Locale: 'vi-VN',
-                            Timezone: 'Asia/Ho_Chi_Minh'
-                        },
-                        ...data
-                    })
-                });
-                return response;
-            } catch (error) {
-                console.error('Lỗi API:', error);
-                throw error;
-            }
-        }
-
-        // Hàm định dạng ngày giờ
-        function formatDate(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('vi-VN', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-
-        // Hàm hiển thị thông tin khách hàng
-        function displayCustomerInfo(data) {
-            const infoDiv = document.getElementById('customerInfo');
-            
-            // Sắp xếp dữ liệu theo ngày cấp mới nhất
-            const sortedData = data.sort((a, b) => new Date(b.NgayCap) - new Date(a.NgayCap));
-            
-            const total = data.length;
-            
-            let html = `
-                <div class="p-6 bg-white/95 rounded-xl shadow-lg animate-fade-in">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">
-                        Thông tin mã số quay thưởng của khách hàng
-                        <span class="text-blue-600">(${total} mã)</span>
-                    </h3>
-                    <div class="table-container">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead>
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Mã Số Quay Thưởng
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Mã Giải Thưởng
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Tình Trạng Quay
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Kết Quả Quay
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Ngày Cấp
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Ngày Cập Nhật
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Người Cấp
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Ghi Chú
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-            `;
-
-            sortedData.forEach((item, index) => {
-                const rowClass = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
-                html += `
-                    <tr class="${rowClass} hover:bg-gray-100 transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            ${item.MaSoQuayThuong || ''}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            ${item.MaGiaiThuong || ''}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            ${item.TinhTrangQuay || ''}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            ${item.KetQuaQuay || 'Chưa có kết quả'}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            ${formatDate(item.NgayCap)}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            ${formatDate(item.NgayCapNhat)}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            ${item.NguoiCap || ''}
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-700">
-                            ${item.GhiChu || ''}
-                        </td>
-                    </tr>
-                `;
-            });
-
-            html += `
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-            
-            infoDiv.innerHTML = html;
-            infoDiv.classList.remove('hidden');
-        }
-
-        // Hàm kiểm tra mã khách hàng
- async function checkCustomerId() {
-    const customerInput = document.getElementById("customerId").value.trim();
-    const confirmButton = document.getElementById("confirmButton");
-    const spinner = document.getElementById("spinner");
-    const buttonText = document.querySelector(".button-text");
-
-    if (!customerInput) {
-        showNotification("Vui lòng nhập mã khách hàng.", "error");
-        return;
-    }
-
-    // Disable nút và hiển thị spinner
-    confirmButton.disabled = true;
-    spinner.classList.remove("hidden");
-    buttonText.classList.add("hidden");
-
-    try {
-        const response = await apiRequest('Find', {
-            Selector: {
-                Filter: `[MaKhachHang] = '${customerInput}'` // Đảm bảo so sánh chính xác
-            }
-        });
-
-        // Kiểm tra và lọc kết quả chính xác
-        const filteredResults = response.filter(item => 
-            item.MaKhachHang && item.MaKhachHang.toLowerCase() === customerInput.toLowerCase()
-        );
-
-        if (filteredResults && filteredResults.length > 0) {
-            showNotification(`Tìm thấy ${filteredResults.length} mã số quay thưởng.`, "success");
-            displayCustomerInfo(filteredResults);
-        } else {
-            showNotification("Không tìm thấy thông tin mã số quay thưởng.", "error");
-            document.getElementById('customerInfo').classList.add('hidden');
-        }
-    } catch (error) {
-        console.error("Lỗi:", error);
-        showNotification("Lỗi kết nối đến hệ thống. Vui lòng thử lại sau.", "error");
-    }
-
-    // Enable nút và ẩn spinner
-    confirmButton.disabled = false;
-    spinner.classList.add("hidden");
-    buttonText.classList.remove("hidden");
-}
-
-        // Hàm hiển thị thông báo
-        function showNotification(message, type) {
-            const notificationDiv = document.getElementById('notification');
-            const bgColor = type === 'success' ? 'bg-green-100' :
-                type === 'error' ? 'bg-red-100' : 'bg-blue-100';
-            const textColor = type === 'success' ? 'text-green-700' :
-                type === 'error' ? 'text-red-700' : 'text-blue-700';
-            const icon = type === 'success' ? 'fa-check-circle' :
-                type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
-
-            notificationDiv.innerHTML = `
-                <div class="p-4 rounded-xl text-center ${bgColor} ${textColor} animate-fade-in">
-                    <i class="fas ${icon} mr-2"></i>
-                    ${message}
-                </div>
-            `;
-            notificationDiv.classList.remove('hidden');
-
-            setTimeout(() => {
-                notificationDiv.classList.add('hidden');
-			}, 3000);
-        }
-
-        // Thêm sự kiện bắt phím Enter khi nhập
-        document.getElementById('customerId').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault(); // Ngăn chặn hành động mặc định
-                checkCustomerId();
-            }
-        });
-    </script>
 </body>
-
 </html>
