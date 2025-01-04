@@ -1,1 +1,148 @@
 
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xổ Số Vietlot</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Futura&display=swap');
+
+        body {
+            background-color: #f8f9fa;
+            overflow: hidden; /* Ẩn cuộn */
+            font-family: 'Futura', sans-serif;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .number {
+            font-size: 64px;
+            font-weight: bold;
+            color: #007bff;
+            transition: transform 0.3s;
+        }
+        .number.animate {
+            transform: scale(1.5);
+        }
+        .modal-header {
+            background-color: #007bff;
+            color: white;
+        }
+        .firework {
+            position: absolute;
+            bottom: 100%;
+            color: #ffcc00;
+            font-size: 24px;
+            animation: fall 1s forwards, explode 0.5s forwards;
+            pointer-events: none;
+        }
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+        @keyframes explode {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(3);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container text-center">
+    <h1>Xổ Số Vietlot</h1>
+    <div class="number" id="winningNumber">0</div>
+    <button class="btn btn-primary" id="startButton">Bắt Đầu</button>
+    <div id="fireworks"></div>
+</div>
+
+<!-- Popup Modal -->
+<div class="modal fade" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resultModalLabel">Chúc Mừng!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Họ tên: <strong>Nguyễn Văn A</strong></p>
+                <p>Mã số trúng thưởng: <strong id="finalNumber"></strong></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<audio id="celebrationSound" src="path_to_your_sound_file.mp3" preload="auto"></audio>
+
+<script>
+    let interval;
+    const winningNumberElement = document.getElementById('winningNumber');
+    const fireworksContainer = document.getElementById('fireworks');
+    const celebrationSound = document.getElementById('celebrationSound');
+
+    function getRandomNumber() {
+        return Math.floor(Math.random() * 1000000); // Số ngẫu nhiên từ 0 đến 999999
+    }
+
+    function createFirework() {
+        const firework = document.createElement('div');
+        firework.className = 'firework';
+        firework.innerHTML = '<i class="fas fa-fireworks"></i>'; // Biểu tượng pháo bông
+        firework.style.left = `${Math.random() * 100}vw`;
+        fireworksContainer.appendChild(firework);
+
+        // Xóa pháo bông sau khi hoàn thành hiệu ứng
+        setTimeout(() => {
+            firework.remove();
+        }, 1500); // Thời gian hiệu ứng
+    }
+
+    function startDrawing() {
+        winningNumberElement.textContent = 'Đang quay...';
+        winningNumberElement.classList.remove('animate');
+        
+        interval = setInterval(() => {
+            winningNumberElement.textContent = getRandomNumber();
+        }, 100); // Cập nhật số mỗi 100ms
+
+        setTimeout(() => {
+            clearInterval(interval);
+            winningNumberElement.classList.add('animate');
+            const finalNumber = getRandomNumber(); // Dừng lại ở số ngẫu nhiên
+            winningNumberElement.textContent = finalNumber; 
+            document.getElementById('finalNumber').textContent = finalNumber; // Hiển thị số trúng thưởng
+
+            // Hiện popup chúc mừng
+            $('#resultModal').modal('show');
+            celebrationSound.play(); // Phát âm thanh chúc mừng
+
+            // Tạo hiệu ứng pháo bông sau 1 giây
+            setTimeout(() => {
+                for (let i = 0; i < 20; i++) { // Tăng số lượng pháo bông
+                    createFirework();
+                }
+            }, 1000); // Thời gian chờ trước khi tạo pháo bông
+
+        }, 5000); // Dừng sau 5 giây
+    }
+
+    document.getElementById('startButton').addEventListener('click', startDrawing);
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
