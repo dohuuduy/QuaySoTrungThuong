@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh sách cử tri</title>
+    <title>Mã dự thưởng</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -409,7 +409,7 @@
 
                 // Kiểm tra cấu trúc dữ liệu và lấy giá trị phù hợp
                 const voterData = voter.Values || voter;
-                const msQuayThuong = voterData.MaSoQuayThuong || '';
+                const msQuayThuong = voterData.idMaSoQuayThuong || '';
                 const maKhachHang = voterData['MaKhachHang'] || '';
                 const ngayCap = voterData['NgayCap'] || '';
                 const tinhTrangQuay = voterData['TinhTrangQuay'] || '';
