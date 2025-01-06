@@ -357,9 +357,10 @@
                 <thead>
                     <tr>
                         <th>Mã Số Quay Thưởng</th>
-                        <th>Mã Khách Hàng</th>
+                        <th>Họ Tên Khách Hàng</th>
+                        <th>Số Điện Thoại</th>
                         <th>Ngày Cấp</th>
-                        <th>Mã Giải Thưởng</th>
+                        <th>Giải Thưởng</th>
                     </tr>
                 </thead>
                 <tbody id="numbersList"></tbody>
@@ -387,9 +388,54 @@
         };
 
         let allPrizeNumbers = [];
+        let customersData = new Map(); // Cache for customer data
         let filteredPrizeNumbers = [];
         let isSpinning = false;
         let spinInterval;
+
+        async function fetchCustomerInfo(maKhachHang) {
+            try {
+                // Kiểm tra cache trước
+                if (customersData.has(maKhachHang)) {
+                    return customersData.get(maKhachHang);
+                }
+
+                const response = await fetch(`https://${config.region}.appsheet.com/api/v2/apps/${config.appId}/tables/KhachHang/Action`, {
+                    method: 'POST',
+                    headers: {
+                        'ApplicationAccessKey': config.accessKey,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        Action: "Find",
+                        Properties: {
+                            Locale: 'vi-VN',
+                            Timezone: 'Asia/Ho_Chi_Minh'
+                        },
+                        Selector: {
+                            MaKhachHang: maKhachHang
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const customerInfo = Array.isArray(data) ? data[0] : (data.Rows ? data.Rows[0] : null);
+                
+                // Lưu vào cache
+                if (customerInfo) {
+                    customersData.set(maKhachHang, customerInfo);
+                }
+
+                return customerInfo;
+            } catch (error) {
+                console.error('Lỗi khi lấy thông tin khách hàng:', error);
+                return null;
+            }
+        }
 
         async function fetchData() {
             try {
@@ -419,6 +465,14 @@
                 const data = await response.json();
                 allPrizeNumbers = Array.isArray(data) ? data : (data.Rows || []);
                 
+                // Fetch customer info for all prize numbers
+                await Promise.all(allPrizeNumbers.map(async (item) => {
+                    const values = item.Values || item;
+                    if (values.MaKhachHang) {
+                        await fetchCustomerInfo(values.MaKhachHang);
+                    }
+                }));
+
                 filterAndDisplayData();
             } catch (error) {
                 console.error('Lỗi khi tải dữ liệu:', error);
@@ -428,71 +482,39 @@
             }
         }
 
-        async function fetchCustomerInfo(maKhachHang) {
-            try {
-                const response = await fetch(`https://${config.region}.appsheet.com/api/v2/apps/${config.appId}/tables/KhachHang/Action`, {
-                    method: 'POST',
-                    headers: {
-                        'ApplicationAccessKey': config.accessKey,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        Action: "Find",
-                        Properties: {
-                            Locale: 'vi-VN',
-                            Timezone: 'Asia/Ho_Chi_Minh'
-                        },
-                        Selector: {
-                            MaKhachHang: maKhachHang
-                        }
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-
-                return Array.isArray(data) ? data[0] : (data.Rows ? data.Rows[0] : null);
-            } catch (error) {
-                console.error('Lỗi khi lấy thông tin khách hàng:', error);
-                return null;
-            }
-        }
-
         function filterAndDisplayData() {
             const selectedPrize = document.getElementById('prizeFilter').value;
             
-            // Lọc dữ liệu theo mã giải thưởng
             filteredPrizeNumbers = allPrizeNumbers.filter(item => {
                 const values = item.Values || item;
                 return !selectedPrize || values.MaGiaiThuong === selectedPrize;
             });
 
-            // Hiển thị dữ liệu đã lọc
             displayData(filteredPrizeNumbers);
 
-            // Cập nhật trạng thái nút quay số
             const drawButton = document.getElementById('drawButton');
             drawButton.disabled = filteredPrizeNumbers.length === 0;
         }
 
-        function displayData(data) {
+        async function displayData(data) {
             const tbody = document.getElementById('numbersList');
             tbody.innerHTML = '';
             
-            data.forEach(item => {
+            for (const item of data) {
                 const values = item.Values || item;
+                const customerInfo = await fetchCustomerInfo(values.MaKhachHang);
+                const customerValues = customerInfo?.Values || customerInfo || {};
+                
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${values.idMaSoQuayThuong || ''}</td>
-                    <td>${values.MaKhachHang || ''}</td>
+                    <td>${customerValues.HoTenKhachHang || 'N/A'}</td>
+                    <td>${customerValues.SoDienThoai || 'N/A'}</td>
                     <td>${formatDate(values.NgayCap) || ''}</td>
                     <td>${getPrizeName(values.MaGiaiThuong) || ''}</td>
                 `;
                 tbody.appendChild(row);
-            });
+            }
         }
 
         function formatDate(dateString) {
@@ -516,15 +538,37 @@
             return prizes[maGiai] || maGiai;
         }
 
+        function showCongratulations(winnerData, customerInfo) {
+            const modal = document.getElementById('congratulationModal');
+            const overlay = document.getElementById('modalOverlay');
+            const winnerName = document.getElementById('winnerName');
+            const prizeNumber = document.getElementById('prizeNumber');
+            const winnerInfo = document.getElementById('winnerInfo');
+
+            const customerValues = customerInfo?.Values || customerInfo || {};
+            const winnerValues = winnerData.Values || winnerData;
+
+            winnerName.textContent = customerValues.HoTenKhachHang || 'Khách hàng';
+            prizeNumber.textContent = winnerValues.idMaSoQuayThuong;
+            winnerInfo.innerHTML = `
+                <div><i class="fas fa-phone"></i> Số điện thoại: ${customerValues.SoDienThoai || 'N/A'}</div>
+                <div><i class="fas fa-user"></i> Họ tên khách hàng: ${customerValues.HoTenKhachHang || 'N/A'}</div>
+                <div><i class="fas fa-trophy"></i> ${getPrizeName(winnerValues.MaGiaiThuong)}</div>
+            `;
+
+            createSparkles();
+            modal.style.display = 'block';
+            overlay.style.display = 'block';
+            modal.classList.add('fade-in');
+        }
+
         function createSparkles() {
             const modal = document.getElementById('congratulationModal');
-            // Xóa sparkles cũ
             const oldSparkles = modal.getElementsByClassName('sparkle');
             while(oldSparkles[0]) {
                 oldSparkles[0].parentNode.removeChild(oldSparkles[0]);
             }
 
-            // Tạo sparkles mới
             for (let i = 0; i < 30; i++) {
                 const sparkle = document.createElement('div');
                 sparkle.className = 'sparkle';
@@ -538,36 +582,6 @@
             }
         }
 
-        function showCongratulations(winnerData, customerInfo) {
-            const modal = document.getElementById('congratulationModal');
-            const overlay = document.getElementById('modalOverlay');
-            const winnerName = document.getElementById('winnerName');
-            const prizeNumber = document.getElementById('prizeNumber');
-            const winnerInfo = document.getElementById('winnerInfo');
-
-            const customerValues = customerInfo?.Values || {};
-            const winnerValues = winnerData.Values || winnerData;
-
-            // Cập nhật nội dung
-            winnerName.textContent = customerValues.HoTenKhachHang || 'Khách hàng';
-            prizeNumber.textContent = winnerValues.idMaSoQuayThuong;
-            winnerInfo.innerHTML = `
-                <div><i class="fas fa-phone"></i> Số điện thoại: ${customerValues.SoDienThoai || 'N/A'}</div>
-                <div><i class="fas fa-user"></i> Mã khách hàng: ${winnerValues.MaKhachHang}</div>
-                <div><i class="fas fa-trophy"></i> ${getPrizeName(winnerValues.MaGiaiThuong)}</div>
-            `;
-
-            // Tạo hiệu ứng sparkles
-            createSparkles();
-
-            // Hiện modal và overlay
-            modal.style.display = 'block';
-            overlay.style.display = 'block';
-
-            // Thêm animation class
-            modal.classList.add('fade-in');
-        }
-
         function closeModal() {
             const modal = document.getElementById('congratulationModal');
             const overlay = document.getElementById('modalOverlay');
@@ -577,7 +591,6 @@
 
         function showError(message) {
             console.error(message);
-            // Có thể thêm hiển thị lỗi trực quan ở đây nếu cần
         }
 
         function startDraw() {
@@ -590,7 +603,6 @@
             drawButton.disabled = true;
             resultDiv.classList.add('spinning');
             
-            // Hiệu ứng quay số
             spinInterval = setInterval(() => {
                 const randomIndex = Math.floor(Math.random() * filteredPrizeNumbers.length);
                 const randomItem = filteredPrizeNumbers[randomIndex];
@@ -598,35 +610,25 @@
                 resultDiv.textContent = randomNumber || 'Đang quay...';
             }, 100);
 
-            // Kết thúc quay số sau 5 giây
             setTimeout(async () => {
                 clearInterval(spinInterval);
                 
-                // Chọn người trúng thưởng
                 const randomIndex = Math.floor(Math.random() * filteredPrizeNumbers.length);
                 const winnerData = filteredPrizeNumbers[randomIndex];
                 const winnerValues = winnerData.Values || winnerData;
                 
-                // Hiển thị kết quả
                 resultDiv.textContent = winnerValues.idMaSoQuayThuong;
                 resultDiv.classList.remove('spinning');
                 
-                // Lấy thông tin khách hàng
                 const customerInfo = await fetchCustomerInfo(winnerValues.MaKhachHang);
-                
-                // Hiển thị popup chúc mừng
                 showCongratulations(winnerData, customerInfo);
                 
-                // Reset trạng thái
                 isSpinning = false;
                 drawButton.disabled = false;
             }, 5000);
         }
 
-        // Khởi tạo ứng dụng khi trang tải xong
         document.addEventListener('DOMContentLoaded', fetchData);
-
-        // Đóng modal khi click vào overlay
         document.getElementById('modalOverlay').addEventListener('click', closeModal);
     </script>
 </body>
