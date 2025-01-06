@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quay Số May Mắn Toyota</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            padding: 1rem 0;
+        }
+
+        .header h1 {
+            color: #008A3C;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 4px;
+            background: linear-gradient(90deg, #008A3C, #00bf54);
+            border-radius: 2px;
+        }
+
+        .control-panel {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: #008A3C;
+            min-width: 150px;
+        }
+
+        select {
+            padding: 0.8rem 1rem;
+            border: 2px solid #008A3C;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #008A3C;
+            background: white;
+            min-width: 200px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        select:focus {
+            box-shadow: 0 0 0 2px rgba(0, 138, 60, 0.2);
+        }
+
+        .result-section {
+            text-align: center;
+            background: #008A3C;
+            padding: 2rem;
+            border-radius: 15px;
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        #result {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .draw-button {
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            background: #FFD700;
+            color: #008A3C;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .draw-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+        }
+
+        .draw-button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .table-section {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        th {
+            background: #008A3C;
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .spinning {
+            animation: spin 0.1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .congratulation-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 600px;
+            background: #008A3C;
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            z-index: 1001;
+            text-align: center;
+            color: white;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+            color: #FFD700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .winner-name {
+            font-size: 2rem;
+            margin: 1.5rem 0;
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        .prize-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #FFD700;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            letter-spacing: 3px;
+        }
+
+        .winner-info {
+            font-size: 1.3rem;
+            margin: 1.5rem 0;
+            line-height: 2;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sparkle {
+            position: absolute;
+            pointer-events: none;
+            animation: sparkle 1.5s infinite;
+        }
+
+        @keyframes sparkle {
+            0% { transform: scale(0) rotate(0deg); opacity: 0; }
+            50% { transform: scale(1) rotate(180deg); opacity: 1; }
+            100% { transform: scale(0) rotate(360deg); opacity: 0; }
+        }
+
+        #loading {
+            text-align: center;
+            padding: 2rem;
+            color: #008A3C;
+            font-size: 1.2rem;
+        }
+
+        .toyota-logo {
+            height: 50px;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+                margin: 0.5rem;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            #result {
+                font-size: 2.5rem;
+            }
+
+            .modal-header {
+                font-size: 2rem;
+            }
+
+            .winner-name {
+                font-size: 1.5rem;
+            }
+
+            .prize-number {
+                font-size: 2rem;
+            }
+
+            .winner-info {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <img src="https://cdn-icons-png.flaticon.com/256/1453/1453589.png" alt="NHA KHOA THANH TRIỀU" class="toyota-logo">
+            <h1>Quay Số May Mắn</h1>
+        </header>
+
+        <div class="control-panel">
+            <div class="filter-section">
+                <span class="filter-label">Chọn giải thưởng:</span>
+                <select id="prizeFilter" onchange="filterAndDisplayData()">
+                    <option value="">Tất cả giải thưởng</option>
+                    <option value="db">Giải Đặc Biệt</option>
+                    <option value="01">Giải Nhất</option>
+                    <option value="02">Giải Nhì</option>
+                    <option value="03">Giải Ba</option>
+                    <option value="kk">Giải Khuyến Khích</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="result-section">
+            <h2 class="result-title">Kết Quả Quay Thưởng</h2>
+            <div id="result">Chưa quay thưởng</div>
+            <button id="drawButton" class="draw-button" onclick="startDraw()">
+                <i class="fas fa-gift"></i> Bắt đầu quay
+            </button>
+        </div>
+
+        <div id="loading">
+            <i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...
+        </div>
+
+        <div class="table-section">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mã Số Quay Thưởng</th>
+                        <th>Mã Khách Hàng</th>
+                        <th>Ngày Cấp</th>
+                        <th>Mã Giải Thưởng</th>
+                    </tr>
+                </thead>
+                <tbody id="numbersList"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="congratulation-modal" id="congratulationModal">
+        <button class="close-modal" onclick="closeModal()">&times;</button>
+        <div class="modal-header">
+            Chúc Mừng Khách Hàng Trúng Thưởng
+        </div>
+        <div class="winner-name" id="winnerName"></div>
+        <div class="prize-number" id="prizeNumber"></div>
+        <div class="winner-info" id="winnerInfo"></div>
+    </div>
+
+    <script>
+        const config = {
+            appId: '1aa9c9a1-1792-412c-b21a-cceeeb78c269',
+            accessKey: 'V2-qMcxL-PdTKn-6Y26p-LyQgo-tS9t9-vxeni-RGFOK-RkLMu',
+            region: 'www',
+            tableName: 'MaSoQuayThuong'
+        };
+
+        let allPrizeNumbers = [];
+        let filteredPrizeNumbers = [];
+        let isSpinning = false;
+        let spinInterval;
+
+        async function fetchData() {
+            try {
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('drawButton').disabled = true;
+
+                const response = await fetch(`https://${config.region}.appsheet.com/api/v2/apps/${config.appId}/tables/${config.tableName}/Action`, {
+                    method: 'POST',
+                    headers: {
+                        'ApplicationAccessKey': config.accessKey,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        Action: "Find",
+                        Properties: {
+                            Locale: 'vi-VN',
+                            Timezone: 'Asia/Ho_Chi_Minh'
+                        },
+                        Selector: {}
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                allPrizeNumbers = Array.isArray(data) ? data : (data.Rows || []);
+                
+                filterAndDisplayData();
+            } catch (error) {
+                console.error('Lỗi khi tải dữ liệu:', error);
+                showError('Không thể tải dữ liệu. Vui lòng thử lại sau.');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        async function fetchCustomerInfo(maKhachHang) {
+            try {
+                const response = await fetch(`https://${config.region}.appsheet.com/api/v2/apps/${config.appId}/tables/KhachHang/Action`, {
+                    method: 'POST',
+                    headers: {
+                        'ApplicationAccessKey': config.accessKey,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        Action: "Find",
+                        Properties: {
+                            Locale: 'vi-VN',
+                            Timezone: 'Asia/Ho_Chi_Minh'
+                        },
+                        Selector: {
+                            MaKhachHang: maKhachHang
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                return Array.isArray(data) ? data[0] : (data.Rows ? data.Rows[0] : null);
+            } catch (error) {
+                console.error('Lỗi khi lấy thông tin khách hàng:', error);
+                return null;
+            }
+        }
+
+        function filterAndDisplayData() {
+            const selectedPrize = document.getElementById('prizeFilter').value;
+            
+            // Lọc dữ liệu theo mã giải thưởng
+            filteredPrizeNumbers = allPrizeNumbers.filter(item => {
+                const values = item.Values || item;
+                return !selectedPrize || values.MaGiaiThuong === selectedPrize;
+            });
+
+            // Hiển thị dữ liệu đã lọc
+            displayData(filteredPrizeNumbers);
+
+            // Cập nhật trạng thái nút quay số
+            const drawButton = document.getElementById('drawButton');
+            drawButton.disabled = filteredPrizeNumbers.length === 0;
+        }
+
+        function displayData(data) {
+            const tbody = document.getElementById('numbersList');
+            tbody.innerHTML = '';
+            
+            data.forEach(item => {
+                const values = item.Values || item;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${values.idMaSoQuayThuong || ''}</td>
+                    <td>${values.MaKhachHang || ''}</td>
+                    <td>${formatDate(values.NgayCap) || ''}</td>
+                    <td>${getPrizeName(values.MaGiaiThuong) || ''}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('vi-VN', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+
+        function getPrizeName(maGiai) {
+            const prizes = {
+                'db': 'Giải Đặc Biệt',
+                '01': 'Giải Nhất',
+                '02': 'Giải Nhì',
+                '03': 'Giải Ba',
+                'kk': 'Giải Khuyến Khích'
+            };
+            return prizes[maGiai] || maGiai;
+        }
+
+        function createSparkles() {
+            const modal = document.getElementById('congratulationModal');
+            // Xóa sparkles cũ
+            const oldSparkles = modal.getElementsByClassName('sparkle');
+            while(oldSparkles[0]) {
+                oldSparkles[0].parentNode.removeChild(oldSparkles[0]);
+            }
+
+            // Tạo sparkles mới
+            for (let i = 0; i < 30; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.width = Math.random() * 10 + 5 + 'px';
+                sparkle.style.height = sparkle.style.width;
+                sparkle.style.backgroundColor = '#FFD700';
+                sparkle.style.animationDelay = Math.random() * 2 + 's';
+                modal.appendChild(sparkle);
+            }
+        }
+
+        function showCongratulations(winnerData, customerInfo) {
+            const modal = document.getElementById('congratulationModal');
+            const overlay = document.getElementById('modalOverlay');
+            const winnerName = document.getElementById('winnerName');
+            const prizeNumber = document.getElementById('prizeNumber');
+            const winnerInfo = document.getElementById('winnerInfo');
+
+            const customerValues = customerInfo?.Values || {};
+            const winnerValues = winnerData.Values || winnerData;
+
+            // Cập nhật nội dung
+            winnerName.textContent = customerValues.HoTenKhachHang || 'Khách hàng';
+            prizeNumber.textContent = winnerValues.idMaSoQuayThuong;
+            winnerInfo.innerHTML = `
+                <div><i class="fas fa-phone"></i> Số điện thoại: ${customerValues.SoDienThoai || 'N/A'}</div>
+                <div><i class="fas fa-user"></i> Mã khách hàng: ${winnerValues.MaKhachHang}</div>
+                <div><i class="fas fa-trophy"></i> ${getPrizeName(winnerValues.MaGiaiThuong)}</div>
+            `;
+
+            // Tạo hiệu ứng sparkles
+            createSparkles();
+
+            // Hiện modal và overlay
+            modal.style.display = 'block';
+            overlay.style.display = 'block';
+
+            // Thêm animation class
+            modal.classList.add('fade-in');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('congratulationModal');
+            const overlay = document.getElementById('modalOverlay');
+            modal.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        function showError(message) {
+            console.error(message);
+            // Có thể thêm hiển thị lỗi trực quan ở đây nếu cần
+        }
+
+        function startDraw() {
+            if (isSpinning || filteredPrizeNumbers.length === 0) return;
+            
+            const resultDiv = document.getElementById('result');
+            const drawButton = document.getElementById('drawButton');
+            
+            isSpinning = true;
+            drawButton.disabled = true;
+            resultDiv.classList.add('spinning');
+            
+            // Hiệu ứng quay số
+            spinInterval = setInterval(() => {
+                const randomIndex = Math.floor(Math.random() * filteredPrizeNumbers.length);
+                const randomItem = filteredPrizeNumbers[randomIndex];
+                const randomNumber = randomItem.Values?.idMaSoQuayThuong || randomItem.idMaSoQuayThuong;
+                resultDiv.textContent = randomNumber || 'Đang quay...';
+            }, 100);
+
+            // Kết thúc quay số sau 5 giây
+            setTimeout(async () => {
+                clearInterval(spinInterval);
+                
+                // Chọn người trúng thưởng
+                const randomIndex = Math.floor(Math.random() * filteredPrizeNumbers.length);
+                const winnerData = filteredPrizeNumbers[randomIndex];
+                const winnerValues = winnerData.Values || winnerData;
+                
+                // Hiển thị kết quả
+                resultDiv.textContent = winnerValues.idMaSoQuayThuong;
+                resultDiv.classList.remove('spinning');
+                
+                // Lấy thông tin khách hàng
+                const customerInfo = await fetchCustomerInfo(winnerValues.MaKhachHang);
+                
+                // Hiển thị popup chúc mừng
+                showCongratulations(winnerData, customerInfo);
+                
+                // Reset trạng thái
+                isSpinning = false;
+                drawButton.disabled = false;
+            }, 5000);
+        }
+
+        // Khởi tạo ứng dụng khi trang tải xong
+        document.addEventListener('DOMContentLoaded', fetchData);
+
+        // Đóng modal khi click vào overlay
+        document.getElementById('modalOverlay').addEventListener('click', closeModal);
+    </script>
+</body>
+</html>
