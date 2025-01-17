@@ -92,7 +92,7 @@
 
         .result-section {
             text-align: center;
-            background: #008A3C;
+            background: linear-gradient(135deg, #008A3C, #006C2E);
             padding: 2rem;
             border-radius: 15px;
             color: white;
@@ -111,6 +111,11 @@
             padding: 1rem;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
+            transition: transform 0.1s ease;
+        }
+
+        .number-animation {
+            transform: scale(1.1);
         }
 
         .draw-button {
@@ -141,6 +146,7 @@
             background: white;
             border-radius: 10px;
             overflow: hidden;
+            margin-top: 2rem;
         }
 
         table {
@@ -166,16 +172,6 @@
             background-color: #f8f9fa;
         }
 
-        .spinning {
-            animation: spin 0.1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
         .modal-overlay {
             display: none;
             position: fixed;
@@ -196,7 +192,7 @@
             transform: translate(-50%, -50%);
             width: 90%;
             max-width: 600px;
-            background: #008A3C;
+            background: linear-gradient(135deg, #008A3C, #006C2E);
             border-radius: 20px;
             padding: 3rem 2rem;
             z-index: 1001;
@@ -206,7 +202,7 @@
         }
 
         .modal-header {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: bold;
             margin-bottom: 2rem;
             color: #FFD700;
@@ -233,12 +229,26 @@
         }
 
         .winner-info {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             margin: 1.5rem 0;
             line-height: 2;
             background: rgba(255, 255, 255, 0.1);
             padding: 1.5rem;
             border-radius: 10px;
+            text-align: left;
+        }
+
+        .winner-info div {
+            margin: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .winner-info i {
+            width: 25px;
+            text-align: center;
+            color: #FFD700;
         }
 
         .close-modal {
@@ -278,7 +288,7 @@
             }
 
             .modal-header {
-                font-size: 2rem;
+                font-size: 1.5rem;
             }
 
             .winner-name {
@@ -290,22 +300,103 @@
             }
 
             .winner-info {
-                font-size: 1.1rem;
+                font-size: 1rem;
+            }
+        }
+		
+		        /* Thêm CSS cho responsive modal */
+        @media (max-width: 768px) {
+            .congratulation-modal {
+                width: 95%;
+                padding: 1.5rem;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+
+            .modal-header {
+                font-size: 1.3rem;
+                padding: 0 1rem;
+            }
+
+            .winner-name {
+                font-size: 1.3rem;
+                padding: 0 0.5rem;
+            }
+
+            .prize-number {
+                font-size: 2rem;
+                padding: 1rem;
+                margin: 1rem 0;
+            }
+
+            .winner-info {
+                font-size: 0.9rem;
+                padding: 1rem;
+            }
+
+            .winner-info div {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.3rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                padding-bottom: 0.5rem;
+            }
+
+            .winner-info i {
+                width: auto;
+                margin-right: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.5rem;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-label {
+                margin-bottom: 0.5rem;
+            }
+
+            select {
+                width: 100%;
+            }
+
+            #result {
+                font-size: 2rem;
+                padding: 0.5rem;
+            }
+
+            .draw-button {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Âm thanh -->
+    <audio id="amThanhQuaySo" src="quay_so.mp3" preload="auto"></audio>
+    <audio id="amThanhChucMung" src="chuc_mung.mp3" preload="auto"></audio>
+
     <div class="container">
         <header class="header">
-            <img src="/api/placeholder/256/256" alt="Logo" class="toyota-logo" style="height: 50px; margin-bottom: 1rem;">
-            <h1>Quay Số May Mắn</h1>
+            <img src="/api/placeholder/256/256" alt="Logo Toyota" class="toyota-logo" style="height: 50px; margin-bottom: 1rem;">
+            <h1>Quay Số May Mắn Toyota</h1>
         </header>
 
         <div class="control-panel">
             <div class="filter-section">
                 <span class="filter-label">Chọn giải thưởng:</span>
-                <select id="prizeFilter" onchange="filterAndDisplayData()">
+                <select id="locGiaiThuong" onchange="locVaHienThiDuLieu()">
                     <option value="">Tất cả giải thưởng</option>
                     <option value="db">Giải Đặc Biệt</option>
                     <option value="G1">Giải Nhất</option>
@@ -319,12 +410,12 @@
         <div class="result-section">
             <h2 class="result-title">Kết Quả Quay Thưởng</h2>
             <div id="result">Chưa quay thưởng</div>
-            <button id="drawButton" class="draw-button" onclick="startDraw()">
+            <button id="nutQuay" class="draw-button" onclick="batDauQuay()">
                 <i class="fas fa-gift"></i> Bắt đầu quay
             </button>
         </div>
 
-        <div id="loading" style="text-align: center; padding: 2rem; color: #008A3C; font-size: 1.2rem;">
+        <div id="dangTai" style="text-align: center; padding: 2rem; color: #008A3C; font-size: 1.2rem;">
             <i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...
         </div>
 
@@ -339,74 +430,76 @@
                         <th>Kết Quả Quay</th>
                     </tr>
                 </thead>
-                <tbody id="numbersList"></tbody>
+                <tbody id="danhSachSo"></tbody>
             </table>
         </div>
     </div>
 
-    <div class="modal-overlay" id="modalOverlay"></div>
-    <div class="congratulation-modal" id="congratulationModal">
-        <button class="close-modal" onclick="closeModal()">&times;</button>
+    <div class="modal-overlay" id="nenModal"></div>
+    <div class="congratulation-modal" id="modalChucMung">
+        <button class="close-modal" onclick="dongModal()">&times;</button>
         <div class="modal-header">
+            <i class="fas fa-trophy" style="color: #FFD700; font-size: 3rem; margin-bottom: 1rem;"></i><br>
             Chúc Mừng Khách Hàng Trúng Thưởng
         </div>
-        <div class="winner-name" id="winnerName"></div>
-        <div class="prize-number" id="prizeNumber"></div>
-        <div class="winner-info" id="winnerInfo"></div>
+        <div class="winner-name" id="tenNguoiTrung"></div>
+        <div class="prize-number" id="soTrungThuong"></div>
+        <div class="winner-info" id="thongTinNguoiTrung"></div>
     </div>
 
     <script>
-        const config = {
+        const cauHinh = {
             appId: '1aa9c9a1-1792-412c-b21a-cceeeb78c269',
             accessKey: 'V2-qMcxL-PdTKn-6Y26p-LyQgo-tS9t9-vxeni-RGFOK-RkLMu',
             region: 'www',
             tableName: 'MaSoQuayThuong'
         };
 
-        let allPrizeNumbers = [];
-        let filteredPrizeNumbers = [];
-        let isSpinning = false;
-        let spinInterval;
-        const customerMap = {};
+        let tatCaMaSo = [];
+        let maSoDaLoc = [];
+        let dangQuay = false;
+        let khoangThoiGianQuay;
+        const danhSachKhachHang = {};
 
-        // Hàm gọi API chung
-        async function apiRequest(action, rows) {
-            const apiUrl = `https://${config.region}.appsheet.com/api/v2/apps/${config.appId}/tables/${config.tableName}/Action`;
-            const body = {
-                Action: action,
+        // Hàm gọi API
+        async function goiAPI(hanhDong, hangDuLieu) {
+            const urlAPI = `https://${cauHinh.region}.appsheet.com/api/v2/apps/${cauHinh.appId}/tables/${cauHinh.tableName}/Action`;
+            const thongTinGoi = {
+                Action: hanhDong,
                 Properties: {
                     Locale: "vi-VN",
                     Timezone: "Asia/Ho_Chi_Minh"
                 },
-                Rows: rows
+                Rows: hangDuLieu
             };
             try {
-                const response = await fetch(apiUrl, {
+                const phanHoi = await fetch(urlAPI, {
                     method: 'POST',
                     headers: {
-                        'ApplicationAccessKey': config.accessKey,
+                        'ApplicationAccessKey': cauHinh.accessKey,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(body)
+                    body: JSON.stringify(thongTinGoi)
                 });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                if (!phanHoi.ok) {
+                    throw new Error(`Lỗi HTTP! Trạng thái: ${phanHoi.status}`);
                 }
-                const result = await response.json();
-                console.log('API Response:', result);
-                return result;
-            } catch (error) {
-                console.error('API call failed:', error);
-                throw error;
+                const ketQua = await phanHoi.json();
+                return ketQua;
+            } catch (loi) {
+                console.error('Lỗi gọi API:', loi);
+                throw loi;
             }
         }
 
-        async function fetchCustomerInfo(maKhachHang) {
+        // Lấy thông tin khách hàng
+       // Cập nhật hàm lấy thông tin khách hàng
+       async function layThongTinKhachHang(maKhachHang) {
             try {
-                const response = await fetch(`https://${config.region}.appsheet.com/api/v2/apps/${config.appId}/tables/KhachHang/Action`, {
+                const phanHoi = await fetch(`https://${cauHinh.region}.appsheet.com/api/v2/apps/${cauHinh.appId}/tables/KhachHang/Action`, {
                     method: 'POST',
                     headers: {
-                        'ApplicationAccessKey': config.accessKey,
+                        'ApplicationAccessKey': cauHinh.accessKey,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
@@ -421,215 +514,230 @@
                     })
                 });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                if (!phanHoi.ok) {
+                    throw new Error(`Lỗi HTTP! Trạng thái: ${phanHoi.status}`);
                 }
 
-                const data = await response.json();
-                if (Array.isArray(data) && data.length > 0) {
-                    return data[0];
-                } else if (data.Rows && data.Rows.length > 0) {
-                    return data.Rows[0];
+                const duLieu = await phanHoi.json();
+                const khachHang = Array.isArray(duLieu) ? duLieu[0] : (duLieu.Rows ? duLieu.Rows[0] : null);
+
+                if (!khachHang) {
+                    console.warn(`Không tìm thấy thông tin khách hàng với mã: ${maKhachHang}`);
+                    return {
+                        HoTenKhachHang: 'Chưa xác định',
+                        CMND: 'Chưa xác định',
+                        SoDienThoai: 'Chưa xác định',
+                        Email: 'Chưa xác định',
+                        DiaChi: 'Chưa xác định'
+                    };
                 }
-                return null;
-            } catch (error) {
-                console.error('Error fetching customer info:', error);
-                return null;
+
+                return khachHang;
+
+            } catch (loi) {
+                console.error('Lỗi khi lấy thông tin khách hàng:', loi);
+                return {
+                    HoTenKhachHang: 'Lỗi khi tải thông tin',
+                    CMND: 'Lỗi khi tải thông tin',
+                    SoDienThoai: 'Lỗi khi tải thông tin',
+                    Email: 'Lỗi khi tải thông tin',
+                    DiaChi: 'Lỗi khi tải thông tin'
+                };
             }
         }
 
-        async function fetchAllCustomers() {
-            try {
-                const customers = await apiRequest('KhachHang', "Find");
-                customers.forEach(customer => {
-                    const customerData = customer.Values || customer;
-                    const maKhachHang = customerData.MaKhachHang;
-                    const tenKhachHang = customerData.HoTenKhachHang || 'Khách hàng ẩn danh';
-                    if (maKhachHang) {
-                        customerMap[maKhachHang] = tenKhachHang;
-                    }
-                });
-            } catch (error) {
-			
-				console.error('Error loading customers:', error);
-            }
-        }
 
-        function filterAndDisplayData() {
-            const selectedPrize = document.getElementById('prizeFilter').value;
+        // Lọc và hiển thị dữ liệu
+        function locVaHienThiDuLieu() {
+            const giaiThuongDaChon = document.getElementById('locGiaiThuong').value;
             
-            // Lọc dữ liệu theo mã giải thưởng
-            filteredPrizeNumbers = allPrizeNumbers.filter(item => {
-                const values = item.Values || item;
-                return !selectedPrize || values.MaGiaiThuong === selectedPrize;
+            maSoDaLoc = tatCaMaSo.filter(item => {
+                const giaTri = item.Values || item;
+                return !giaiThuongDaChon || giaTri.MaGiaiThuong === giaiThuongDaChon;
             });
 
-            // Hiển thị dữ liệu đã lọc
-            displayData(filteredPrizeNumbers);
+            hienThiDuLieu(maSoDaLoc);
 
-            // Cập nhật trạng thái nút quay số
-            const drawButton = document.getElementById('drawButton');
-            drawButton.disabled = filteredPrizeNumbers.length === 0;
+            const nutQuay = document.getElementById('nutQuay');
+            nutQuay.disabled = maSoDaLoc.length === 0;
         }
 
-        async function fetchData() {
+        // Lấy dữ liệu từ server
+        async function layDuLieu() {
             try {
-                document.getElementById('loading').style.display = 'block';
-                document.getElementById('drawButton').disabled = true;
+                document.getElementById('dangTai').style.display = 'block';
+                document.getElementById('nutQuay').disabled = true;
 
-                // Load customers and prize numbers in parallel
-                const [_, data] = await Promise.all([
-                    fetchAllCustomers(),
-                    apiRequest("Find")
-                ]);
-
-                allPrizeNumbers = Array.isArray(data) ? data : (data.Rows || []);
-                filterAndDisplayData();
-            } catch (error) {
-                console.error('Lỗi khi tải dữ liệu:', error);
+                const duLieu = await goiAPI("Find");
+                
+                tatCaMaSo = Array.isArray(duLieu) ? duLieu : (duLieu.Rows || []);
+                locVaHienThiDuLieu();
+            } catch (loi) {
+                console.error('Lỗi khi tải dữ liệu:', loi);
                 alert('Không thể tải dữ liệu. Vui lòng thử lại sau.');
             } finally {
-                document.getElementById('loading').style.display = 'none';
+                document.getElementById('dangTai').style.display = 'none';
             }
         }
 
-        function displayData(data) {
-            const tbody = document.getElementById('numbersList');
+        // Hiển thị dữ liệu trong bảng
+        // Cập nhật hàm hiển thị dữ liệu
+        async function hienThiDuLieu(duLieu) {
+            const tbody = document.getElementById('danhSachSo');
             tbody.innerHTML = '';
             
-            data.forEach(item => {
-                const values = item.Values || item;
-                const customerName = customerMap[values.MaKhachHang] || 'Không xác định';
+            for (const item of duLieu) {
+                const giaTri = item.Values || item;
                 
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${values.idMaSoQuayThuong || ''}</td>
-                    <td>${customerName} (${values.MaKhachHang})</td>
-                    <td>${formatDate(values.NgayCap) || ''}</td>
-                    <td>${getPrizeName(values.MaGiaiThuong) || ''}</td>
-                    <td>${values.KetQuaQuay ? getPrizeName(values.KetQuaQuay) : 'Chưa quay'}</td>
+                // Lấy và cache thông tin khách hàng
+                if (!danhSachKhachHang[giaTri.MaKhachHang]) {
+                    const thongTinKH = await layThongTinKhachHang(giaTri.MaKhachHang);
+                    if (thongTinKH) {
+                        danhSachKhachHang[giaTri.MaKhachHang] = thongTinKH;
+                    }
+                }
+                
+                const thongTinKH = danhSachKhachHang[giaTri.MaKhachHang] || {};
+                const tenKhachHang = thongTinKH.HoTenKhachHang || 'Chưa xác định';
+                
+                const hang = document.createElement('tr');
+                hang.innerHTML = `
+                    <td>${giaTri.idMaSoQuayThuong || ''}</td>
+                    <td>${tenKhachHang} (${giaTri.MaKhachHang})</td>
+                    <td>${dinhDangNgay(giaTri.NgayCap) || ''}</td>
+                    <td>${layTenGiai(giaTri.MaGiaiThuong) || ''}</td>
+                    <td>${giaTri.KetQuaQuay ? layTenGiai(giaTri.KetQuaQuay) : 'Chưa quay'}</td>
                 `;
-                tbody.appendChild(row);
-            });
+                tbody.appendChild(hang);
+            }
         }
 
-        function formatDate(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('vi-VN', {
+        // Định dạng ngày tháng
+        function dinhDangNgay(chuoiNgay) {
+            if (!chuoiNgay) return '';
+            const ngay = new Date(chuoiNgay);
+            return ngay.toLocaleDateString('vi-VN', {
                 day: '2-digit',
                 month: '2-digit',
                 year: 'numeric'
             });
         }
 
-        function getPrizeName(maGiai) {
-            const prizes = {
+        // Lấy tên giải thưởng
+        function layTenGiai(maGiai) {
+            const danhSachGiai = {
                 'db': 'Giải Đặc Biệt',
                 'G1': 'Giải Nhất',
                 'G2': 'Giải Nhì',
                 'G3': 'Giải Ba',
                 'kk': 'Giải Khuyến Khích'
             };
-            return prizes[maGiai] || maGiai;
+            return danhSachGiai[maGiai] || maGiai;
         }
 
-        function startDraw() {
-            if (isSpinning || filteredPrizeNumbers.length === 0) return;
+        // Bắt đầu quay số
+        function batDauQuay() {
+            if (dangQuay || maSoDaLoc.length === 0) return;
             
-            const resultDiv = document.getElementById('result');
-            const drawButton = document.getElementById('drawButton');
-            const selectedPrize = document.getElementById('prizeFilter').value;
+            const phanKetQua = document.getElementById('result');
+            const nutQuay = document.getElementById('nutQuay');
+            const giaiDaChon = document.getElementById('locGiaiThuong').value;
+            const amThanhQuay = document.getElementById('amThanhQuaySo');
             
-            if (!selectedPrize) {
+            if (!giaiDaChon) {
                 alert('Vui lòng chọn giải thưởng trước khi quay!');
                 return;
             }
             
-            isSpinning = true;
-            drawButton.disabled = true;
-            resultDiv.classList.add('spinning');
+            dangQuay = true;
+            nutQuay.disabled = true;
+            amThanhQuay.play();
             
             // Hiệu ứng quay số
-            spinInterval = setInterval(() => {
-                const randomIndex = Math.floor(Math.random() * filteredPrizeNumbers.length);
-                const randomItem = filteredPrizeNumbers[randomIndex];
-                const randomNumber = randomItem.Values?.idMaSoQuayThuong || randomItem.idMaSoQuayThuong;
-                resultDiv.textContent = randomNumber || 'Đang quay...';
+            khoangThoiGianQuay = setInterval(() => {
+                const chiSoNgauNhien = Math.floor(Math.random() * maSoDaLoc.length);
+                const phanTuNgauNhien = maSoDaLoc[chiSoNgauNhien];
+                const soNgauNhien = phanTuNgauNhien.Values?.idMaSoQuayThuong || phanTuNgauNhien.idMaSoQuayThuong;
+                phanKetQua.textContent = soNgauNhien || 'Đang quay...';
+                phanKetQua.classList.add('number-animation');
+                setTimeout(() => phanKetQua.classList.remove('number-animation'), 50);
             }, 100);
 
-            // Kết thúc quay số sau 5 giây
+            // Kết thúc sau 5 giây
             setTimeout(async () => {
-                clearInterval(spinInterval);
+                clearInterval(khoangThoiGianQuay);
+                amThanhQuay.pause();
+                amThanhQuay.currentTime = 0;
                 
-                // Chọn người trúng thưởng
-                const randomIndex = Math.floor(Math.random() * filteredPrizeNumbers.length);
-                const winnerData = filteredPrizeNumbers[randomIndex];
-                const winnerValues = winnerData.Values || winnerData;
+                const chiSoNgauNhien = Math.floor(Math.random() * maSoDaLoc.length);
+                const nguoiTrungGiai = maSoDaLoc[chiSoNgauNhien];
+                const thongTinTrungGiai = nguoiTrungGiai.Values || nguoiTrungGiai;
                 
-                // Hiển thị kết quả
-                resultDiv.textContent = winnerValues.idMaSoQuayThuong;
-                resultDiv.classList.remove('spinning');
+                phanKetQua.textContent = thongTinTrungGiai.idMaSoQuayThuong;
                 
                 try {
-                    // Cập nhật kết quả quay thưởng trong database
-                    await apiRequest("Edit", [{
-                        idMaSoQuayThuong: winnerValues.idMaSoQuayThuong,
-                        KetQuaQuay: selectedPrize
+                    await goiAPI("Edit", [{
+                        idMaSoQuayThuong: thongTinTrungGiai.idMaSoQuayThuong,
+                        KetQuaQuay: giaiDaChon
                     }]);
                     
-                    // Lấy thông tin khách hàng và hiển thị thông báo
-                    const customerInfo = await fetchCustomerInfo(winnerValues.MaKhachHang);
-                    showCongratulations(winnerData);
+                    const thongTinKhachHang = await layThongTinKhachHang(thongTinTrungGiai.MaKhachHang);
+                    document.getElementById('amThanhChucMung').play();
+                    hienThiChucMung(nguoiTrungGiai, thongTinKhachHang);
                     
-                    // Cập nhật lại danh sách sau khi quay thưởng thành công
-                    await fetchData();
+                    await layDuLieu();
                     
-                } catch (error) {
-                    console.error('Lỗi khi cập nhật kết quả:', error);
+                } catch (loi) {
+                    console.error('Lỗi khi cập nhật kết quả:', loi);
                     alert('Có lỗi xảy ra khi cập nhật kết quả quay thưởng! Vui lòng thử lại.');
                 }
                 
-                // Reset trạng thái
-                isSpinning = false;
-                drawButton.disabled = false;
+                dangQuay = false;
+                nutQuay.disabled = false;
             }, 5000);
         }
 
-        function showCongratulations(winnerData) {
-            const modal = document.getElementById('congratulationModal');
-            const overlay = document.getElementById('modalOverlay');
-            const winnerName = document.getElementById('winnerName');
-            const prizeNumber = document.getElementById('prizeNumber');
-            const winnerInfo = document.getElementById('winnerInfo');
+        // Hiển thị modal chúc mừng
+        function hienThiChucMung(duLieuNguoiTrung, thongTinKhachHang) {
+            const modal = document.getElementById('modalChucMung');
+            const nen = document.getElementById('nenModal');
+            const tenNguoiTrung = document.getElementById('tenNguoiTrung');
+            const soTrungThuong = document.getElementById('soTrungThuong');
+            const thongTinNguoiTrung = document.getElementById('thongTinNguoiTrung');
 
-            const winnerValues = winnerData.Values || winnerData;
-            const customerName = customerMap[winnerValues.MaKhachHang] || 'Không xác định';
+            const giaTri = duLieuNguoiTrung.Values || duLieuNguoiTrung;
+            const tenKhachHang = thongTinKhachHang?.HoTenKhachHang || 'Không xác định';
 
-            winnerName.textContent = customerName;
-            prizeNumber.textContent = winnerValues.idMaSoQuayThuong;
-            winnerInfo.innerHTML = `
-                <div><i class="fas fa-user"></i> Mã khách hàng: ${winnerValues.MaKhachHang}</div>
-                <div><i class="fas fa-trophy"></i> ${getPrizeName(winnerValues.MaGiaiThuong)}</div>
-                <div><i class="fas fa-star"></i> Trúng ${getPrizeName(winnerValues.KetQuaQuay)}</div>
+            tenNguoiTrung.textContent = tenKhachHang;
+            soTrungThuong.textContent = giaTri.idMaSoQuayThuong;
+            thongTinNguoiTrung.innerHTML = `
+                <div><i class="fas fa-user"></i> Mã khách hàng: ${giaTri.MaKhachHang}</div>
+                <div><i class="fas fa-id-card"></i> CMND/CCCD: ${thongTinKhachHang?.CMND || 'Không xác định'}</div>
+                <div><i class="fas fa-phone"></i> Số điện thoại: ${thongTinKhachHang?.SoDienThoai || 'Không xác định'}</div>
+                <div><i class="fas fa-envelope"></i> Email: ${thongTinKhachHang?.Email || 'Không xác định'}</div>
+                <div><i class="fas fa-map-marker-alt"></i> Địa chỉ: ${thongTinKhachHang?.DiaChi || 'Không xác định'}</div>
+                <div><i class="fas fa-trophy"></i> Giải thưởng: ${layTenGiai(giaTri.MaGiaiThuong)}</div>
+                <div><i class="fas fa-star"></i> Kết quả trúng: ${layTenGiai(giaTri.KetQuaQuay)}</div>
+                <div><i class="fas fa-calendar-alt"></i> Ngày cấp: ${dinhDangNgay(giaTri.NgayCap)}</div>
             `;
 
             modal.style.display = 'block';
-            overlay.style.display = 'block';
+            nen.style.display = 'block';
         }
 
-        function closeModal() {
-            const modal = document.getElementById('congratulationModal');
-            const overlay = document.getElementById('modalOverlay');
+        // Đóng modal
+        function dongModal() {
+            const modal = document.getElementById('modalChucMung');
+            const nen = document.getElementById('nenModal');
             modal.style.display = 'none';
-            overlay.style.display = 'none';
+            nen.style.display = 'none';
         }
 
-        // Khởi tạo ứng dụng khi trang tải xong
-        document.addEventListener('DOMContentLoaded', fetchData);
+        // Đóng modal khi click vào nền
+        document.getElementById('nenModal').addEventListener('click', dongModal);
 
-        // Đóng modal khi click vào overlay
-        document.getElementById('modalOverlay').addEventListener('click', closeModal);
+        // Khởi tạo trang web
+        document.addEventListener('DOMContentLoaded', layDuLieu);
     </script>
 </body>
 </html>
