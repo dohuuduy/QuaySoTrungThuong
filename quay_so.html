@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quay Số May Mắn</title>
+    <link rel="icon" type="image/jpg" href="thanh_trieu_logo.jpg">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --toyota-green: #008a3c;
+            --toyota-dark-green: #006c2e;
+        }
+
+        body {
+            background: linear-gradient(135deg, #008a3c 0%, #005824 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            padding: 2rem;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0 0 3px rgba(0, 138, 60, 0.5);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            padding: 1rem 0;
+        }
+
+        .header h1 {
+            color: var(--toyota-green);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--toyota-green), #00bf54);
+            border-radius: 2px;
+        }
+
+        .filter-section {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .filter-section .row {
+            justify-content: center;
+            align-items: center;
+        }
+
+        .filter-section .col-md-4 {
+            text-align: right;
+            padding-right: 1rem;
+        }
+
+        .filter-section .col-md-8 {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        #locGiaiThuong {
+            max-width: 200px;
+        }
+
+        .stats {
+            color: var(--toyota-green);
+            font-weight: 600;
+            margin-left: 1rem;
+            white-space: nowrap;
+        }
+
+        .result-section {
+            text-align: center;
+            background: linear-gradient(135deg, var(--toyota-green), var(--toyota-dark-green));
+            padding: 2rem;
+            border-radius: 15px;
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        #result {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .number-animation {
+            transform: scale(1.1) !important;
+        }
+
+        .draw-button {
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            background: #ffd700;
+            color: var(--toyota-green);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .draw-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+        }
+
+        .table-responsive {
+            margin-top: 2rem;
+        }
+
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table th {
+            text-align: center;
+            background: var(--toyota-green);
+            color: white;
+            font-weight: 600;
+            padding: 1rem;
+        }
+
+        .table td {
+            vertical-align: middle;
+            padding: 0.75rem;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, var(--toyota-green), var(--toyota-dark-green));
+            color: white;
+            border-radius: 20px;
+        }
+
+        .modal-header {
+            border-bottom: none;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .winner-name {
+            font-size: 2rem;
+            color: #ffd700;
+            font-weight: bold;
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+        .prize-number {
+            font-size: 3rem;
+            color: #ffd700;
+            font-weight: bold;
+            text-align: center;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+
+        .winner-info {
+            text-align: left;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+
+        .winner-info i {
+            width: 25px;
+            color: #ffd700;
+            margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            #result {
+                font-size: 2.5rem;
+            }
+
+            .winner-name {
+                font-size: 1.5rem;
+            }
+
+            .prize-number {
+                font-size: 2rem;
+            }
+
+            .winner-info {
+			
+                font-size: 0.9rem;
+            }
+
+            .filter-section .col-md-4 {
+                text-align: left;
+                margin-bottom: 0.5rem;
+            }
+
+            .filter-section .col-md-8 {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            #locGiaiThuong {
+                max-width: 100%;
+            }
+
+            .stats {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <audio id="amThanhQuaySo" src="quay_so.mp3" preload="auto"></audio>
+    <audio id="amThanhChucMung" src="chuc_mung.mp3" preload="auto"></audio>
+
+    <div class="container">
+        <div class="main-card">
+            <header class="header">
+                <img src="/api/placeholder/256/256" alt="Logo Toyota" class="img-fluid mb-3" style="height: 50px">
+                <h1>Quay Số May Mắn</h1>
+            </header>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="filter-section">
+                        <div class="row align-items-center">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold text-success">Chọn giải thưởng:</label>
+                            </div>
+                            <div class="col-md-8">
+                                <select id="locGiaiThuong" class="form-select" onchange="locVaHienThiDuLieu()">
+                                    <option value="">Tất cả giải thưởng</option>
+                                    <option value="db">Giải Đặc Biệt</option>
+                                    <option value="G1">Giải Nhất</option>
+                                    <option value="G2">Giải Nhì</option>
+                                    <option value="G3">Giải Ba</option>
+                                    <option value="kk">Giải Khuyến Khích</option>
+                                </select>
+                                <div class="stats" id="thongKeMaSo"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-section">
+                <h2 class="result-title">Kết Quả Quay Thưởng</h2>
+                <div id="result">Chưa quay thưởng</div>
+                <button id="nutQuay" class="draw-button" onclick="batDauQuay()">
+                    <i class="fas fa-gift"></i> Bắt đầu quay
+                </button>
+            </div>
+
+            <div id="dangTai" class="text-center text-success py-4">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Đang tải...</span>
+                </div>
+                <div class="mt-2">Đang tải dữ liệu...</div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Mã Số</th>
+                            <th>Khách Hàng</th>
+                            <th>Ngày Cấp</th>
+                            <th>Giải Thưởng</th>
+                            <th>Kết Quả</th>
+                        </tr>
+                    </thead>
+                    <tbody id="danhSachSo"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Chúc Mừng -->
+    <div class="modal fade" id="modalChucMung" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <i class="fas fa-trophy" style="font-size: 3rem; color: #ffd700"></i>
+                    <h3 class="mt-3 mb-4">Chúc Mừng Khách Hàng</h3>
+                    <div class="winner-name" id="tenNguoiTrung"></div>
+                    <div class="prize-number" id="soTrungThuong"></div>
+                    <div class="winner-info" id="thongTinNguoiTrung"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const cauHinh = {
+            appId: "1aa9c9a1-1792-412c-b21a-cceeeb78c269",
+            accessKey: "V2-qMcxL-PdTKn-6Y26p-LyQgo-tS9t9-vxeni-RGFOK-RkLMu",
+            region: "www",
+            tableName: "MaSoQuayThuong"
+        };
+
+        let tatCaMaSo = [];
+        let maSoDaLoc = [];
+        let dangQuay = false;
+        let khoangThoiGianQuay;
+        const danhSachKhachHang = {};
+        const modalChucMung = new bootstrap.Modal(document.getElementById("modalChucMung"));
+
+        async function goiAPI(hanhDong, hangDuLieu) {
+            const urlAPI = `https://${cauHinh.region}.appsheet.com/api/v2/apps/${cauHinh.appId}/tables/${cauHinh.tableName}/Action`;
+            const thongTinGoi = {
+                Action: hanhDong,
+                Properties: {
+                    Locale: "vi-VN",
+                    Timezone: "Asia/Ho_Chi_Minh"
+                },
+                Rows: hangDuLieu
+            };
+
+            try {
+                const phanHoi = await fetch(urlAPI, {
+                    method: "POST",
+                    headers: {
+                        ApplicationAccessKey: cauHinh.accessKey,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(thongTinGoi)
+                });
+
+                if (!phanHoi.ok) throw new Error(`HTTP error! status: ${phanHoi.status}`);
+                return await phanHoi.json();
+            } catch (loi) {
+                console.error("Lỗi gọi API:", loi);
+                throw loi;
+            }
+        }
+
+        async function layThongTinKhachHang(maKhachHang) {
+            try {
+                const phanHoi = await fetch(`https://${cauHinh.region}.appsheet.com/api/v2/apps/${cauHinh.appId}/tables/KhachHang/Action`, {
+                    method: "POST",
+                    headers: {
+                        ApplicationAccessKey: cauHinh.accessKey,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        Action: "Find",
+                        Properties: {
+                            Locale: "vi-VN",
+                            Timezone: "Asia/Ho_Chi_Minh"
+                        },
+                        Selector: {
+                            MaKhachHang: maKhachHang
+                        }
+                    })
+                });
+
+                if (!phanHoi.ok) throw new Error(`HTTP error! status: ${phanHoi.status}`);
+
+                const duLieu = await phanHoi.json();
+                return Array.isArray(duLieu) ? duLieu[0] : duLieu.Rows ? duLieu.Rows[0] : null;
+            } catch (loi) {
+                console.error("Lỗi khi lấy thông tin khách hàng:", loi);
+                return null;
+            }
+        }
+
+        function locVaHienThiDuLieu() {
+            const giaiThuongDaChon = document.getElementById("locGiaiThuong").value;
+
+            maSoDaLoc = tatCaMaSo.filter((item) => {
+                const giaTri = item.Values || item;
+                return (!giaiThuongDaChon || giaTri.MaGiaiThuong === giaiThuongDaChon) && !giaTri.KetQuaQuay;
+            });
+
+            // Đếm số lượng mã theo giải được chọn
+            const tongSoMaTheoGiai = tatCaMaSo.filter((item) => {
+                const giaTri = item.Values || item;
+                return !giaiThuongDaChon || giaTri.MaGiaiThuong === giaiThuongDaChon;
+            }).length;
+
+            // Cập nhật thống kê
+            const thongKe = document.getElementById("thongKeMaSo");
+            thongKe.textContent = `Còn lại: ${maSoDaLoc.length}/${tongSoMaTheoGiai} mã số`;
+
+            hienThiDuLieu(maSoDaLoc);
+
+            const nutQuay = document.getElementById("nutQuay");
+            nutQuay.disabled = maSoDaLoc.length === 0;
+        }
+
+        async function layDuLieu() {
+            try {
+                document.getElementById("dangTai").style.display = "block";
+                document.getElementById("nutQuay").disabled = true;
+
+                const duLieu = await goiAPI("Find");
+                tatCaMaSo = Array.isArray(duLieu) ? duLieu : duLieu.Rows || [];
+                locVaHienThiDuLieu();
+            } catch (loi) {
+                console.error("Lỗi khi tải dữ liệu:", loi);
+                alert("Không thể tải dữ liệu. Vui lòng thử lại sau.");
+            } finally {
+                document.getElementById("dangTai").style.display = "none";
+            }
+        }
+
+        async function hienThiDuLieu(duLieu) {
+            const tbody = document.getElementById("danhSachSo");
+            tbody.innerHTML = "";
+
+            for (const item of duLieu) {
+                const giaTri = item.Values || item;
+
+                if (!danhSachKhachHang[giaTri.MaKhachHang]) {
+                    const thongTinKH = await layThongTinKhachHang(giaTri.MaKhachHang);
+                    if (thongTinKH) {
+                        danhSachKhachHang[giaTri.MaKhachHang] = thongTinKH;
+                    }
+                }
+
+                const thongTinKH = danhSachKhachHang[giaTri.MaKhachHang] || {};
+                const tenKhachHang = thongTinKH.HoTenKhachHang || "Chưa xác định";
+
+                const hang = document.createElement("tr");
+                const trangThaiClass = giaTri.KetQuaQuay ? "table-success" : "";
+                hang.className = trangThaiClass;
+
+                hang.innerHTML = `
+                    <td class="text-center">${giaTri.idMaSoQuayThuong || ""}</td>
+                    <td>${tenKhachHang} (${giaTri.MaKhachHang})</td>
+                    <td class="text-center">${dinhDangNgay(giaTri.NgayCap) || ""}</td>
+                    <td class="text-center">${layTenGiai(giaTri.MaGiaiThuong) || ""}</td>
+                    <td class="text-center">${giaTri.KetQuaQuay 
+                        ? `<span class="badge bg-success">${layTenGiai(giaTri.KetQuaQuay)}</span>`
+                        : '<span class="badge bg-secondary">Chưa quay</span>'
+                    }</td>
+                `;
+                tbody.appendChild(hang);
+            }
+        }
+
+        function dinhDangNgay(chuoiNgay) {
+            if (!chuoiNgay) return "";
+            const ngay = new Date(chuoiNgay);
+            return ngay.toLocaleDateString("vi-VN", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+            });
+        }
+
+        function layTenGiai(maGiai) {
+            const danhSachGiai = {
+                db: "Giải Đặc Biệt",
+                G1: "Giải Nhất",
+                G2: "Giải Nhì",
+                G3: "Giải Ba",
+                kk: "Giải Khuyến Khích"
+            };
+            return danhSachGiai[maGiai] || maGiai;
+        }
+
+        async function batDauQuay() {
+            if (dangQuay || maSoDaLoc.length === 0) return;
+
+            const phanKetQua = document.getElementById("result");
+            const nutQuay = document.getElementById("nutQuay");
+            const giaiDaChon = document.getElementById("locGiaiThuong").value;
+            const amThanhQuay = document.getElementById("amThanhQuaySo");
+
+            if (!giaiDaChon) {
+                alert("Vui lòng chọn giải thưởng trước khi quay!");
+                return;
+            }
+
+            dangQuay = true;
+            nutQuay.disabled = true;
+            amThanhQuay.currentTime = 0;
+            amThanhQuay.play();
+
+            const thoiGianQuay = 5000; // 5 giây
+            const tocDoCapNhat = 100; // 100ms mỗi lần cập nhật
+            let thoiGianDaQua = 0;
+
+            khoangThoiGianQuay = setInterval(() => {
+                const chiSoNgauNhien = Math.floor(Math.random() * maSoDaLoc.length);
+                const phanTuNgauNhien = maSoDaLoc[chiSoNgauNhien];
+                const soNgauNhien = phanTuNgauNhien.Values?.idMaSoQuayThuong || phanTuNgauNhien.idMaSoQuayThuong;
+
+                phanKetQua.textContent = soNgauNhien;
+                phanKetQua.classList.add("number-animation");
+                setTimeout(() => phanKetQua.classList.remove("number-animation"), 50);
+
+                thoiGianDaQua += tocDoCapNhat;
+                if (thoiGianDaQua >= thoiGianQuay) {
+                    clearInterval(khoangThoiGianQuay);
+                    ketThucQuay(phanTuNgauNhien, giaiDaChon);
+                }
+            }, tocDoCapNhat);
+        }
+
+        async function ketThucQuay(nguoiTrungGiai, giaiDaChon) {
+            const thongTinTrungGiai = nguoiTrungGiai.Values || nguoiTrungGiai;
+            const amThanhQuay = document.getElementById("amThanhQuaySo");
+            const amThanhChucMung = document.getElementById("amThanhChucMung");
+
+            amThanhQuay.pause();
+            amThanhQuay.currentTime = 0;
+
+            try {
+                await goiAPI("Edit", [{
+                    idMaSoQuayThuong: thongTinTrungGiai.idMaSoQuayThuong,
+                    KetQuaQuay: giaiDaChon
+                }]);
+
+                const thongTinKhachHang = await layThongTinKhachHang(thongTinTrungGiai.MaKhachHang);
+                amThanhChucMung.play();
+                hienThiChucMung(nguoiTrungGiai, thongTinKhachHang);
+
+                await layDuLieu();
+            } catch (loi) {
+                console.error("Lỗi khi cập nhật kết quả:", loi);
+                alert("Có lỗi xảy ra khi cập nhật kết quả quay thưởng!");
+            } finally {
+                dangQuay = false;
+                document.getElementById("nutQuay").disabled = false;
+            }
+        }
+
+        function hienThiChucMung(duLieuNguoiTrung, thongTinKhachHang) {
+            const giaTri = duLieuNguoiTrung.Values || duLieuNguoiTrung;
+            const tenKhachHang = thongTinKhachHang?.HoTenKhachHang || "Không xác định";
+
+            document.getElementById("tenNguoiTrung").textContent = tenKhachHang;
+            document.getElementById("soTrungThuong").textContent = giaTri.idMaSoQuayThuong;
+            document.getElementById("thongTinNguoiTrung").innerHTML = `
+                <div class="mb-2"><i class="fas fa-user"></i> Mã KH: ${giaTri.MaKhachHang}</div>
+                <div class="mb-2"><i class="fas fa-id-card"></i> CMND/CCCD: ${thongTinKhachHang?.CMND || "Không xác định"}</div>
+                <div class="mb-2"><i class="fas fa-phone"></i> SĐT: ${thongTinKhachHang?.SoDienThoai || "Không xác định"}</div>
+                <div class="mb-2"><i class="fas fa-envelope"></i> Email: ${thongTinKhachHang?.Email || "Không xác định"}</div>
+                <div class="mb-2"><i class="fas fa-map-marker-alt"></i> Địa chỉ: ${thongTinKhachHang?.DiaChi || "Không xác định"}</div>
+                <div class="mb-2"><i class="fas fa-trophy"></i> Giải thưởng: ${layTenGiai(giaTri.MaGiaiThuong)}</div>
+                <div class="mb-2"><i class="fas fa-star"></i> Kết quả trúng: ${layTenGiai(giaTri.KetQuaQuay)}</div>
+                <div><i class="fas fa-calendar-alt"></i> Ngày cấp: ${dinhDangNgay(giaTri.NgayCap)}</div>
+            `;
+
+            modalChucMung.show();
+        }
+
+        document.addEventListener("DOMContentLoaded", layDuLieu);
+    </script>
+</body>
+</html>
