@@ -1,251 +1,201 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="h-full bg-gray-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Nhập</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-        
-        body {
-            background: #f8f9fa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            width: 100%;
-            padding: 15px;
-        }
-        
-        .container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .login-container {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
-            position: relative;
-            margin: auto;
-        }
-        
-        .login-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .login-header i {
-            font-size: 3.5rem;
-            color: #0d6efd;
-            margin-bottom: 1.2rem;
-        }
-        
-        .login-header h2 {
-            font-size: 1.8rem;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-        
-        .form-floating {
-            margin-bottom: 1.2rem;
-        }
-        
-        .form-floating > label {
-            padding-left: 1rem;
-        }
-        
-        .form-control:focus {
-            border-color: #008A3C;
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-        }
-        
-        .btn-primary {
-            padding: 0.8rem;
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-        
-        .login-footer {
-            text-align: center;
-            margin-top: 1.5rem;
-            color: #6c757d;
-        }
-        
-        #loadingSpinner {
-            display: none;
-        }
-        
-        .form-check {
-            padding-left: 1.8rem;
-        }
-        
-        .form-check-input {
-            margin-top: 0.3rem;
-        }
-        
-        @media (max-width: 576px) {
-            .login-container {
-                padding: 1.5rem;
-            }
-        }
-    </style>
+    <title>Hệ thống Quản lý Thanh toán</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </head>
-<body>
-    <div class="container">
-        <div class="login-container">
-            <div class="login-header">
-                <i class="fas fa-user-circle"></i>
-                <h2>Đăng Nhập</h2>
+<body class="h-full bg-gray-100">
+    <div class="min-h-full">
+        <header class="bg-white shadow">
+            <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">Hệ thống Thanh toán</h1>
+                <span id="employeeInfo" class="text-lg font-semibold text-gray-700"></span>
             </div>
-            
-            <form id="loginForm">
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="username" placeholder="Tài khoản" required>
-                    <label for="username">Tài khoản</label>
+        </header>
+
+        <!-- Login Form -->
+        <div id="loginForm" class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+            <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+                <form class="space-y-6">
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-gray-700">Email đăng nhập</label>
+                        <input id="username" type="email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700">Mật khẩu</label>
+                        <input id="password" type="password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+                    <button type="button" id="loginBtn" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Đăng nhập
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Payment Data -->
+        <div id="paymentData" class="hidden max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <div class="px-4 py-6 sm:px-0">
+                <div class="flex justify-between mb-4">
+                    <h2 class="text-xl font-semibold">Danh sách thanh toán</h2>
+                    <button id="logoutBtn" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                        Đăng xuất
+                    </button>
                 </div>
-                
-                <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="password" placeholder="Mật khẩu" required>
-                    <label for="password">Mật khẩu</label>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tên</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Số tiền</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Trạng thái</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ngày hồ sơ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentTableBody" class="bg-white divide-y divide-gray-200">
+                        </tbody>
+                    </table>
                 </div>
-                
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" id="rememberMe">
-                    <label class="form-check-label" for="rememberMe">
-                        Ghi nhớ đăng nhập
-                    </label>
-                </div>
-                
-                <button type="submit" class="btn btn-primary w-100" id="loginButton">
-                    <span id="loadingSpinner" class="spinner-border spinner-border-sm me-2" role="status"></span>
-                    Đăng Nhập
-                </button>
-            </form>
-            
-            <div class="login-footer">
-                <p class="text-muted mb-0">© 2024 Your Company Name</p>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+    </div>
+
     <script>
-        const APP_ID = '1aa9c9a1-1792-412c-b21a-cceeeb78c269';
-        const API_KEY = 'V2-qMcxL-PdTKn-6Y26p-LyQgo-tS9t9-vxeni-RGFOK-RkLMu';
+        // Constants
+        const APP_ID = 'f0e8fe84-c1bf-42dc-85c8-b366ddfbe114';
+        const ACCESS_KEY = 'V2-wYQcG-hDD18-16NRt-bcyyR-9WkUZ-q1BvT-Algt6-whxLl';
+        const API_URL = `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables`;
 
-        function showLoading() {
-            $('#loadingSpinner').show();
-            $('#loginButton').prop('disabled', true);
-        }
+        // Elements
+        const elements = {
+            loginForm: document.getElementById('loginForm'),
+            paymentData: document.getElementById('paymentData'),
+            loginBtn: document.getElementById('loginBtn'),
+            logoutBtn: document.getElementById('logoutBtn'),
+            username: document.getElementById('username'),
+            password: document.getElementById('password'),
+            employeeInfo: document.getElementById('employeeInfo'),
+            paymentTableBody: document.getElementById('paymentTableBody'),
+            loadingOverlay: document.getElementById('loadingOverlay')
+        };
 
-        function hideLoading() {
-            $('#loadingSpinner').hide();
-            $('#loginButton').prop('disabled', false);
-        }
+        // Helper functions
+        const showLoading = () => elements.loadingOverlay.classList.remove('hidden');
+        const hideLoading = () => elements.loadingOverlay.classList.add('hidden');
 
-        async function apiRequest(action, data) {
-            const apiUrl = `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables/KhachHang/Action`;
+        const showToast = (message, type = 'success') => {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: "top",
+                position: "center",
+                backgroundColor: type === 'error' ? "#ef4444" : "#22c55e",
+            }).showToast();
+        };
+
+        // API functions
+        const fetchData = async (url, options) => {
             try {
-                const response = await $.ajax({
-                    url: apiUrl,
-                    method: 'POST',
+                const response = await fetch(url, {
+                    ...options,
                     headers: {
-                        'ApplicationAccessKey': API_KEY,
-                        'Content-Type': 'application/json'
+                        'ApplicationAccessKey': ACCESS_KEY,
+                        'Content-Type': 'application/json',
+                        ...options.headers,
                     },
-                    data: JSON.stringify({
-                        Action: action,
-                        Properties: {
-                            Locale: 'vi-VN',
-                            Timezone: 'Asia/Ho_Chi_Minh'
-                        },
-                        ...data
-                    })
                 });
-                return response;
+                if (!response.ok) throw new Error('Network response was not ok');
+                return await response.json();
             } catch (error) {
                 console.error('API Error:', error);
                 throw error;
             }
-        }
+        };
 
-        async function login(username, password) {
-            try {
-                const result = await apiRequest('Find', {
-                    Properties: {
-                        Selector: `Filter(KhachHang, [TaiKhoan] = "${username}")` // Updated field name
-                    }
-                });
+        // Login function
+ const login = async () => {
+    const email = elements.username.value;
+    if (!email) {
+        showToast('Vui lòng nhập email', 'error');
+        return;
+    }
 
-                if (result && Array.isArray(result) && result.length === 1) {
-                    const user = result[0];
-                    if (user.MatKhau === password) {
-                        return { success: true, user };
-                    }
+    showLoading();
+    try {
+        // Fetch user's payment data
+        const result = await fetchData(`${API_URL}/Pay/Action`, {
+            method: 'POST',
+            body: JSON.stringify({
+                Action: "Find",
+                Properties: {
+                    Selector: `Filter(Pay, [nguoi_tao] = "${email}")`
                 }
-                return { success: false, message: 'Tài khoản hoặc mật khẩu không đúng' };
-            } catch (error) {
-                return { success: false, message: 'Lỗi kết nối server' };
-            }
-        }
-
-        $('#loginForm').on('submit', async function(e) {
-            e.preventDefault();
-            
-            const username = $('#username').val();
-            const password = $('#password').val();
-            const rememberMe = $('#rememberMe').is(':checked');
-
-            showLoading();
-
-            try {
-                const result = await login(username, password);
-                
-                if (result.success) {
-                    // Lưu thông tin đăng nhập nếu được chọn
-                    if (rememberMe) {
-                        localStorage.setItem('username', username);
-                        localStorage.setItem('userToken', JSON.stringify(result.user));
-                    }
-                    
-                    // Chuyển hướng sau khi đăng nhập thành công
-                    window.location.href = 'dashboard.html';
-                } else {
-                    alert(result.message);
-                }
-            } catch (error) {
-                alert('Đã có lỗi xảy ra. Vui lòng thử lại sau.');
-            } finally {
-                hideLoading();
-            }
+            })
         });
 
-        // Kiểm tra đăng nhập được lưu
-        $(document).ready(function() {
-            const savedUsername = localStorage.getItem('username');
-            if (savedUsername) {
-                $('#username').val(savedUsername);
-                $('#rememberMe').prop('checked', true);
+        if (result && Array.isArray(result) && result.length > 0) {
+            // Login successful
+            localStorage.setItem('userEmail', email);
+            showToast('Đăng nhập thành công!');
+            
+            // Chuyển hướng đến quay_so.html
+            window.location.href = 'quay_so.html';
+        } else {
+            showToast('Không tìm thấy dữ liệu cho email này', 'error');
+        }
+    } catch (error) {
+        showToast('Lỗi đăng nhập: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+    }
+};
+
+
+        // Display payment data
+        const displayPaymentData = (data) => {
+            elements.paymentTableBody.innerHTML = data.map(payment => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${payment.ID}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${payment.Name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${payment.Amount}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${payment.Status}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${payment.ngay_ho_so}</td>
+                </tr>
+            `).join('');
+        };
+
+        // Logout function
+        const logout = () => {
+            localStorage.removeItem('userEmail');
+            elements.username.value = '';
+            elements.password.value = '';
+            elements.loginForm.classList.remove('hidden');
+            elements.paymentData.classList.add('hidden');
+            elements.employeeInfo.textContent = '';
+            elements.paymentTableBody.innerHTML = '';
+            showToast('Đã đăng xuất');
+        };
+
+        // Event listeners
+        elements.loginBtn.addEventListener('click', login);
+        elements.logoutBtn.addEventListener('click', logout);
+
+        // Check for stored login
+        document.addEventListener('DOMContentLoaded', () => {
+            const storedEmail = localStorage.getItem('userEmail');
+            if (storedEmail) {
+                elements.username.value = storedEmail;
+                login();
             }
         });
     </script>
