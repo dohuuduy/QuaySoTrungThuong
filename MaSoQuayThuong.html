@@ -10,124 +10,228 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
+        /* Thiết lập cơ bản */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #008A3C;
             min-height: 100vh;
-            padding: 2rem 2cm;  /* Changed padding to 2cm */
+            padding: 1rem;
         }
 
+        @media (min-width: 768px) {
+            body {
+                padding: 2rem 2cm;
+            }
+        }
+
+        /* Tiêu đề và phụ đề */
         .main-title {
             color: white;
             text-align: center;
-            font-size: 2.5rem;
+            font-size: 1.8rem;
             font-weight: bold;
             margin-bottom: 0.5rem;
             text-transform: uppercase;
         }
 
+        @media (min-width: 768px) {
+            .main-title {
+                font-size: 2.5rem;
+            }
+        }
+
         .subtitle {
             color: white;
             text-align: center;
-            font-size: 1.2rem;
+            font-size: 1rem;
             margin-bottom: 2rem;
         }
 
+        /* Container tìm kiếm */
         .search-container {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: 20px;
-            padding: 2rem;
+            padding: 1.5rem;
             margin: 0 auto;
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
         }
 
-        .form-label {
-            color: white;
-            font-weight: 500;
+        /* Nút xóa tìm kiếm */
+        .search-input-wrapper {
+            position: relative;
         }
 
-        .form-control {
-            border-radius: 10px;
-            padding: 0.8rem 1rem;
-            font-size: 1.1rem;
-            border: none;
-            background: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .search-btn {
-            width: 100%;
-            padding: 0.8rem;
-            border-radius: 10px;
-            background: #00b34d;
-            border: none;
-            color: white;
-            font-weight: 500;
-            font-size: 1.1rem;
-            margin-top: 1rem;
+        .clear-search {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            padding: 8px;
+            color: #666;
             transition: all 0.3s ease;
+            background: #f8f9fa;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .search-btn:hover {
-            background: #004d21 !important;  /* Updated hover color */
+        .clear-search:hover {
+            color: #dc3545;
+            transform: translateY(-50%) scale(1.1);
+            background: #e9ecef;
         }
 
+        /* Container kết quả */
         .results-container {
             background: white;
             border-radius: 20px;
-            padding: 2rem;
+            padding: 1rem;
             margin-top: 2rem;
-            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.3);  /* Enhanced shadow */
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.3);
+            overflow-x: auto;
         }
 
+        /* Nút về trang chủ */
+        .home-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 1rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #00b34d;
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .home-button:hover {
+            background: #ffbf00;
+            transform: translateY(-20px);
+        }
+
+        /* Bảng dữ liệu */
         .table {
             margin-bottom: 0;
+            min-width: 800px;
         }
 
         .table th {
             font-weight: 600;
             color: #008A3C;
-            text-transform: uppercase;  /* Made headers uppercase */
-            border-bottom: 2px solid #008A3C;  /* Added border under headers */
-            padding: 1rem 0.5rem;  /* Added more padding */
-            text-align: center;  /* Center aligned headers */
+            text-transform: uppercase;
+            border-bottom: 2px solid #008A3C;
+            padding: 1rem 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .table th:hover {
+            background-color: #e9ecef;
+            color: #006C2E;
         }
 
         .table td {
-            text-align: center;  /* Center aligned content */
+            text-align: center;
             vertical-align: middle;
+            padding: 0.75rem 0.5rem;
+            white-space: nowrap;
         }
 
+        /* Tiêu đề nhóm */
+        .group-header td {
+            text-align: left !important;
+            padding: 1rem !important;
+            background: #e8f5e9;
+            transition: all 0.3s ease;
+        }
+
+        .group-header:hover td {
+            background: #c8e6c9;
+            cursor: pointer;
+        }
+
+        .group-header i {
+            margin-right: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .group-header:hover i {
+            transform: translateX(5px);
+        }
+
+        .group-count {
+            background: #008A3C;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 8px;
+            font-size: 0.9em;
+        }
+
+        /* Biểu tượng sắp xếp */
+        .sort-icon {
+            display: inline-block;
+            margin-left: 5px;
+            font-size: 1em;
+            transition: transform 0.3s ease;
+        }
+
+        /* Trạng thái */
+        .status-badge {
+            padding: 0.5em 1em;
+            border-radius: 20px;
+            font-weight: 500;
+            min-width: 100px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        /* Nút QR */
         .qr-button {
+            padding: 0.3rem 1rem;
             background: #008A3C;
             color: white;
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-size: 0.9rem;
+            border-radius: 20px;
             transition: all 0.3s ease;
         }
 
         .qr-button:hover {
             background: #006C2E;
-            transform: translateY(-2px);
+            transform: scale(1.05);
         }
 
-        .group-header {
-            background: #e8f5e9;
-            color: #008A3C;
-            font-weight: 600;
-            text-align: center;
+        /* Loading spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 2rem;
+            height: 2rem;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #008A3C;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
 
-        #errorMessage {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-        }
-
-        .loading {
-            color: white;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -138,17 +242,23 @@
 
         <div class="search-container">
             <div class="mb-3">
-                <label for="searchInput" class="form-label">Mã Khách Hàng</label>
-                <input type="text" class="form-control search-input" id="searchInput" 
-                       placeholder="Nhập mã khách hàng của bạn...">
+                <label for="searchInput" class="form-label text-white">Mã Khách Hàng</label>
+                <div class="search-input-wrapper">
+                    <input type="text" class="form-control search-input" id="searchInput" 
+                           placeholder="Nhập mã khách hàng của bạn...">
+                    <i class="fas fa-times clear-search" onclick="clearSearch()" title="Xóa tìm kiếm"></i>
+                </div>
             </div>
-            <button class="btn search-btn" onclick="performSearch()">Tra cứu</button>
+            <button class="btn btn-success w-100" onclick="performSearch()">
+                <i class="fas fa-search me-2"></i>Tra cứu
+            </button>
         </div>
 
         <div id="errorMessage" class="alert alert-danger mt-3" role="alert" style="display: none;"></div>
 
-        <div id="loading" class="loading text-center" style="display: none;">
-            <i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...
+        <div id="loading" class="text-center text-white my-3" style="display: none;">
+            <div class="loading-spinner mb-2"></div>
+            <div>Đang tải dữ liệu...</div>
         </div>
 
         <div class="results-container">
@@ -156,22 +266,27 @@
                 <table class="table table-hover" id="voterTable">
                     <thead>
                         <tr>
-                            <th></th>
-                            <th>Mã Dự Thưởng</th>
-                            <th>Mã Giải Thưởng</th>
-                            <th>Mã Khách Hàng</th>
+                            <th>QR</th>
+                            <th data-sort="idMaSoQuayThuong">Mã Số Quay Thưởng <span class="sort-icon">↓</span></th>
+                            <th data-sort="MaGiaiThuong">Mã Giải Thưởng <span class="sort-icon">↓</span></th>
+                            <th data-sort="MaKhachHang">Mã Khách Hàng <span class="sort-icon">↓</span></th>
+                            <th data-sort="HoTenKhachHang">Họ Tên Khách Hàng <span class="sort-icon">↓</span></th>
+<!--                             <th data-sort="TinhTrangQuay">Tình Trạng Quay <span class="sort-icon">↓</span></th> -->
                         </tr>
                     </thead>
                     <tbody id="voterTableBody">
-                        <!-- Table data will be inserted here -->
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- QR Modal -->
-    <div id="qrModal" class="modal fade">
+    <button class="home-button" onclick="window.location.href='dashboard.html'" title="Về trang chủ">
+        <i class="fas fa-home"></i>
+    </button>
+
+    <!-- Modal QR -->
+    <div class="modal fade" id="qrModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -188,115 +303,257 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Add event listener for Enter key
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                performSearch();
-            }
-        });
-
-        function performSearch() {
-            const searchValue = document.getElementById('searchInput').value.trim();
-            if (searchValue) {
-                searchTable();
-            }
-        }
-
-        // Your existing JavaScript code here
+        // Cấu hình API
         const appId = '1aa9c9a1-1792-412c-b21a-cceeeb78c269';
         const accessKey = 'V2-qMcxL-PdTKn-6Y26p-LyQgo-tS9t9-vxeni-RGFOK-RkLMu';
         const region = 'www';
         const usersTableName = 'MaSoQuayThuong';
+        const customersTableName = 'KhachHang'; // Tên bảng khách hàng
 
+        // Biến lưu trữ trạng thái sắp xếp
+        let currentSort = {
+            column: 'idMaSoQuayThuong',
+            direction: 'asc'
+        };
 
+        // Cache dữ liệu khách hàng
+        let customerCache = {};
 
-        async function apiRequest(tableName) {
+        // Hàm gọi API
+        async function apiRequest(tableName, selector = {}) {
             const apiUrl = `https://${region}.appsheet.com/api/v2/apps/${appId}/tables/${tableName}/Action`;
             try {
                 const response = await fetch(apiUrl, {
                     method: 'POST',
-                    headers: { 'ApplicationAccessKey': accessKey, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ Action: "Find", Properties: { Locale: 'vi-VN', Timezone: 'Asia/Ho_Chi_Minh' }, Selector: {} })
+                    headers: {
+                        'ApplicationAccessKey': accessKey,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        Action: "Find",
+                        Properties: {
+                            Locale: 'vi-VN',
+                            Timezone: 'Asia/Ho_Chi_Minh'
+                        },
+                        Selector: selector
+                    })
                 });
-                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+
+                if (!response.ok) {
+                    throw new Error(`Lỗi HTTP! Trạng thái: ${response.status}`);
+                }
+
                 return await response.json();
-            } catch (error) { console.error('API Error:', error); throw error; }
-        }
-
-        async function fetchVoterData() {
-            try {
-                document.getElementById('loading').style.display = 'block';
-                document.getElementById('errorMessage').style.display = 'none';
-                const response = await apiRequest(usersTableName);
-                if (Array.isArray(response)) { return response; }
-                else if (response && response.Rows) { return response.Rows; }
-                else { throw new Error('Dữ liệu không đúng định dạng'); }
             } catch (error) {
-                showError('Đã xảy ra lỗi khi tải dữ liệu: ' + error.message); return [];
-            } finally { document.getElementById('loading').style.display = 'none'; }
+                console.error('Lỗi API:', error);
+                throw error;
+            }
         }
 
-        function displayVoterData(voters) {
-            const tableBody = document.getElementById('voterTableBody');
-            tableBody.innerHTML = '';
+        // Hàm lấy dữ liệu mã số quay thưởng
+async function fetchVoterData() {
+    try {
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('errorMessage').style.display = 'none';
 
-            if (!Array.isArray(voters) || voters.length === 0) {
-                showError('Không có dữ liệu'); return;
-            }
+        const response = await apiRequest(usersTableName);
+        let data;
 
-            const groupedVoters = {};
-            voters.forEach(voter => {
-                const voterData = voter.Values || voter;
-                const maGiaiThuong = voterData['MaGiaiThuong'] || 'Không xác định';
-                if (!groupedVoters[maGiaiThuong]) { groupedVoters[maGiaiThuong] = []; }
-                groupedVoters[maGiaiThuong].push(voterData);
-            });
+        if (Array.isArray(response)) {
+            data = response;
+        } else if (response && response.Rows) {
+            data = response.Rows;
+        } else {
+            throw new Error('Dữ liệu không đúng định dạng');
+        }
 
-            const prizeIcons = { "GTDB": '<i class="fas fa-trophy prize-icon"></i>', "G1": '<i class="fas fa-medal prize-icon"></i>', "G2": '<i class="fas fa-award prize-icon"></i>', "G3": '<i class="fas fa-certificate prize-icon"></i>', "KK": '<i class="fas fa-gift prize-icon"></i>', "Không xác định": '<i class="fas fa-question prize-icon"></i>', };
+        // Lọc chỉ lấy những bản ghi có TinhTrangQuay khác TRUE
+        const filteredData = data.filter(voter => {
+            const voterData = voter.Values || voter;
+            return voterData.TinhTrangQuay != 'Y';
+        });
 
+        await fetchAndCacheCustomerData(filteredData);
+        return filteredData;
+    } catch (error) {
+        showError('Đã xảy ra lỗi khi tải dữ liệu: ' + error.message);
+        return [];
+    } finally {
+        document.getElementById('loading').style.display = 'none';
+    }
+}
 
-            for (const maGiaiThuong in groupedVoters) {
-                const group = groupedVoters[maGiaiThuong];
-                const icon = prizeIcons[maGiaiThuong] || '<i class="fas fa-question prize-icon"></i>';
+		// Hàm lấy và cache thông tin khách hàng
+        async function fetchAndCacheCustomerData(voterData) {
+            try {
+                const uniqueCustomerIds = [...new Set(voterData.map(voter => 
+                    (voter.Values?.MaKhachHang || voter.MaKhachHang)
+                ))];
 
-                const groupHeader = `<tr class="group-header"><td colspan="6">${icon} Mã Giải Thưởng: ${maGiaiThuong}</td></tr>`;
-                tableBody.insertAdjacentHTML('beforeend', groupHeader); // Use insertAdjacentHTML for efficiency
+                const customerResponse = await apiRequest(customersTableName);
+                const customers = Array.isArray(customerResponse) ? customerResponse : customerResponse.Rows;
 
-                group.forEach(voterData => {
-                    const msQuayThuong = voterData.idMaSoQuayThuong || '';
-                    const maKhachHang = voterData['MaKhachHang'] || '';
-                    const ngayCap = voterData['NgayCap'] || '';
-                    const tinhTrangQuay = voterData['TinhTrangQuay'] || '';
-                    let statusClass = 'status-pending';
-                    let statusIcon = '<i class="bi bi-question-circle"></i>';
-                    if (tinhTrangQuay.toLowerCase() === 'đã quay') { statusClass = 'status-active'; statusIcon = '<i class="bi bi-check-circle-fill"></i>'; }
-                    else if (tinhTrangQuay.toLowerCase() === 'chưa quay') { statusClass = 'status-inactive'; statusIcon = '<i class="bi bi-x-circle-fill"></i>'; }
-
-                    const row = `<tr>
-                        <td><button class="btn qr-button" onclick="showQR('${msQuayThuong}', '${encodeURIComponent(maKhachHang)}')"><i class="fas fa-qrcode"></i> QR</button></td>
-                        <td>${msQuayThuong}</td><td>${maGiaiThuong}</td><td>${maKhachHang}</td><td>${ngayCap}</td>
-                        <td><span class="badge ${statusClass}">${statusIcon} ${tinhTrangQuay}</span></td>
-                    </tr>`;
-                    tableBody.insertAdjacentHTML('beforeend', row); // Use insertAdjacentHTML
+                uniqueCustomerIds.forEach(customerId => {
+                    const customer = customers.find(c => 
+                        (c.Values?.MaKhachHang || c.MaKhachHang) === customerId
+                    );
+                    customerCache[customerId] = customer ? 
+                        (customer.Values?.HoTenKhachHang || customer.HoTenKhachHang) : 'Không xác định';
                 });
+            } catch (error) {
+                console.error('Lỗi khi lấy thông tin khách hàng:', error);
             }
         }
 
-        function showError(message) {
-            document.getElementById('errorMessage').textContent = message;
-            document.getElementById('errorMessage').style.display = 'block';
+        // Hàm lấy tên khách hàng từ cache
+        function getCustomerName(maKhachHang) {
+            return customerCache[maKhachHang] || 'Không xác định';
         }
 
-       function searchTable() {
+        // Hàm sắp xếp dữ liệu
+function sortData(column) {
+    const direction = currentSort.column === column && currentSort.direction === 'asc' ? 'desc' : 'asc';
+    
+    // Lấy tất cả dữ liệu từ bảng
+    const rows = Array.from(document.querySelectorAll('#voterTableBody tr:not(.group-header)'));
+    const sortedData = rows.map(row => ({
+        Values: {
+            idMaSoQuayThuong: row.querySelector('td:nth-child(2)').textContent,
+            MaGiaiThuong: row.querySelector('td:nth-child(3)').textContent,
+            MaKhachHang: row.querySelector('td:nth-child(4)').textContent,
+            HoTenKhachHang: row.querySelector('td:nth-child(5)').textContent
+        }
+    }));
+
+    // Sắp xếp dữ liệu
+    sortedData.sort((a, b) => {
+        let valueA = a.Values[column];
+        let valueB = b.Values[column];
+        
+        if (column === 'idMaSoQuayThuong') {
+            valueA = parseInt(valueA) || 0;
+            valueB = parseInt(valueB) || 0;
+            return direction === 'asc' ? valueA - valueB : valueB - valueA;
+        }
+        
+        return direction === 'asc' 
+            ? String(valueA).localeCompare(String(valueB), 'vi')
+            : String(valueB).localeCompare(String(valueA), 'vi');
+    });
+
+    // Cập nhật trạng thái sắp xếp
+    currentSort = { column, direction };
+    
+    // Hiển thị lại dữ liệu đã sắp xếp
+    displayVoterData(sortedData);
+    
+    // Cập nhật biểu tượng sắp xếp
+    updateSortIcons();
+}
+
+        // Hàm lấy index cột
+        function getColumnIndex(column) {
+            const columns = {
+                'idMaSoQuayThuong': 2,
+                'MaGiaiThuong': 3,
+                'MaKhachHang': 4,
+                'HoTenKhachHang': 5,
+                'TinhTrangQuay': 6
+            };
+            return columns[column] || 2;
+        }
+
+        // Hàm cập nhật biểu tượng sắp xếp
+        function updateSortIcons() {
+            document.querySelectorAll('.sort-icon').forEach(icon => {
+                icon.textContent = '↓';
+            });
+            
+            const currentHeader = document.querySelector(`[data-sort="${currentSort.column}"] .sort-icon`);
+            if (currentHeader) {
+                currentHeader.textContent = currentSort.direction === 'asc' ? '↑' : '↓';
+            }
+        }
+
+        // Hàm hiển thị dữ liệu
+ function displayVoterData(voters) {
+    const tableBody = document.getElementById('voterTableBody');
+    tableBody.innerHTML = '';
+
+    if (!Array.isArray(voters) || voters.length === 0) {
+        showError('Không có dữ liệu');
+        return;
+    }
+
+    const groupedVoters = {};
+    voters.forEach(voter => {
+        const voterData = voter.Values || voter;
+        const maGiaiThuong = voterData['MaGiaiThuong'] || 'Không xác định';
+        if (!groupedVoters[maGiaiThuong]) {
+            groupedVoters[maGiaiThuong] = [];
+        }
+        groupedVoters[maGiaiThuong].push(voterData);
+    });
+
+    for (const maGiaiThuong in groupedVoters) {
+        const group = groupedVoters[maGiaiThuong];
+        
+        const groupHeader = `
+            <tr class="group-header">
+                <td colspan="5">
+                    <i class="fas fa-layer-group"></i> 
+                    Mã Giải Thưởng: ${maGiaiThuong}
+                    <span class="group-count">${group.length}</span>
+                </td>
+            </tr>
+        `;
+        tableBody.insertAdjacentHTML('beforeend', groupHeader);
+
+        group.forEach(voterData => {
+            const msQuayThuong = voterData.idMaSoQuayThuong || '';
+            const maKhachHang = voterData['MaKhachHang'] || '';
+            const hoTenKhachHang = getCustomerName(maKhachHang);
+            
+            const row = `
+                <tr>
+                    <td>
+                        <button class="btn qr-button" onclick="showQR('${msQuayThuong}', '${encodeURIComponent(maKhachHang)}')">
+                            <i class="fas fa-qrcode"></i> QR
+                        </button>
+                    </td>
+                    <td>${msQuayThuong}</td>
+                    <td>${maGiaiThuong}</td>
+                    <td>${maKhachHang}</td>
+                    <td>${hoTenKhachHang}</td>
+                </tr>
+            `;
+            tableBody.insertAdjacentHTML('beforeend', row);
+        });
+    }
+}
+
+        // Hàm hiển thị lỗi
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000);
+        }
+
+        // Hàm tìm kiếm
+        function searchTable() {
             const input = document.querySelector('.search-input');
             const filter = input.value.toUpperCase();
-            const table = document.getElementById('voterTable'); // Get table by ID
-            const tr = table.querySelectorAll('tbody tr'); // Select all rows within tbody
+            const table = document.getElementById('voterTable');
+            const tr = table.querySelectorAll('tbody tr');
 
+            let hasVisibleRows = false;
 
             tr.forEach(row => {
                 if (row.classList.contains('group-header')) {
-                    return; // Skip group header rows directly
+                    return;
                 }
 
                 let rowVisible = false;
@@ -307,18 +564,18 @@
                     }
                 });
 
-
                 row.style.display = rowVisible ? "" : "none";
+                if (rowVisible) hasVisibleRows = true;
             });
 
-            //Now handle group header visibility
+            // Xử lý hiển thị tiêu đề nhóm
             const groupHeaders = table.querySelectorAll('.group-header');
-             groupHeaders.forEach(header => {
+            groupHeaders.forEach(header => {
                 let nextRow = header.nextElementSibling;
                 let allRowsHidden = true;
 
-                while(nextRow && !nextRow.classList.contains('group-header')){
-                    if(nextRow.style.display !== 'none'){
+                while (nextRow && !nextRow.classList.contains('group-header')) {
+                    if (nextRow.style.display !== 'none') {
                         allRowsHidden = false;
                         break;
                     }
@@ -326,27 +583,62 @@
                 }
                 header.style.display = allRowsHidden ? "none" : "";
             });
+
+            if (!hasVisibleRows) {
+                showError('Không tìm thấy kết quả phù hợp');
+            }
         }
 
+        // Hàm xóa tìm kiếm
+        function clearSearch() {
+            document.querySelector('.search-input').value = '';
+            searchTable();
+        }
+
+        // Hàm hiển thị QR code
         function showQR(msQuayThuong, encodedDonVi) {
             const maKhachHang = decodeURIComponent(encodedDonVi);
-            document.getElementById('qrModal').style.display = 'block';
+            const modal = new bootstrap.Modal(document.getElementById('qrModal'));
             document.getElementById('currentIDCT').textContent = msQuayThuong;
             document.getElementById('currentDonVi').textContent = maKhachHang;
             document.getElementById('qrcode').innerHTML = '';
+            
             const url = `https://bifa.wows.vn/giaodien.html?msQuayThuong=${msQuayThuong}`;
-            new QRCode(document.getElementById('qrcode'), { text: url, width: 300, height: 300 });
+            new QRCode(document.getElementById('qrcode'), {
+                text: url,
+                width: 300,
+                height: 300
+            });
+            modal.show();
         }
 
-        function closeModal() { document.getElementById('qrModal').style.display = 'none'; }
-
-        window.onclick = function (event) {
-            const modal = document.getElementById('qrModal');
-            if (event.target == modal) { modal.style.display = 'none'; }
+        // Hàm thực hiện tìm kiếm
+        function performSearch() {
+            const searchValue = document.getElementById('searchInput').value.trim();
+            if (searchValue) {
+                searchTable();
+            }
         }
 
+        // Khởi tạo sự kiện
         document.addEventListener('DOMContentLoaded', async () => {
             try {
+                // Thêm sự kiện sắp xếp
+                document.querySelectorAll('th[data-sort]').forEach(header => {
+                    header.addEventListener('click', () => {
+                        sortData(header.dataset.sort);
+                    });
+                });
+
+                // Thêm sự kiện tìm kiếm
+                document.getElementById('searchInput').addEventListener('keyup', searchTable);
+                document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        performSearch();
+                    }
+                });
+
+                // Tải dữ liệu ban đầu
                 const voters = await fetchVoterData();
                 displayVoterData(voters);
             } catch (error) {
