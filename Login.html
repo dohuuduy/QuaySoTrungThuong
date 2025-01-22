@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ thống Quản lý Thanh toán</title>
+    <title>Đăng nhập</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
@@ -12,9 +12,8 @@
 <body class="h-full bg-gray-100">
     <div class="min-h-full">
         <header class="bg-white shadow">
-            <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
-                <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">Hệ thống Thanh toán</h1>
-                <span id="employeeInfo" class="text-lg font-semibold text-gray-700"></span>
+            <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+                <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">Đăng nhập hệ thống</h1>
             </div>
         </header>
 
@@ -23,8 +22,8 @@
             <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
                 <form class="space-y-6">
                     <div>
-                        <label for="username" class="block text-sm font-medium text-gray-700">Email đăng nhập</label>
-                        <input id="username" type="email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <label for="username" class="block text-sm font-medium text-gray-700">Tài khoản</label>
+                        <input id="username" type="text" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     </div>
                     <div>
                         <label for="password" class="block text-sm font-medium text-gray-700">Mật khẩu</label>
@@ -36,33 +35,6 @@
                 </form>
             </div>
         </div>
-
-        <!-- Payment Data -->
-        <div id="paymentData" class="hidden max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-            <div class="px-4 py-6 sm:px-0">
-                <div class="flex justify-between mb-4">
-                    <h2 class="text-xl font-semibold">Danh sách thanh toán</h2>
-                    <button id="logoutBtn" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
-                        Đăng xuất
-                    </button>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tên</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Số tiền</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Trạng thái</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ngày hồ sơ</th>
-                            </tr>
-                        </thead>
-                        <tbody id="paymentTableBody" class="bg-white divide-y divide-gray-200">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Loading Overlay -->
@@ -72,20 +44,15 @@
 
     <script>
         // Constants
-        const APP_ID = 'f0e8fe84-c1bf-42dc-85c8-b366ddfbe114';
-        const ACCESS_KEY = 'V2-wYQcG-hDD18-16NRt-bcyyR-9WkUZ-q1BvT-Algt6-whxLl';
+        const APP_ID = '1aa9c9a1-1792-412c-b21a-cceeeb78c269';
+        const ACCESS_KEY = 'V2-qMcxL-PdTKn-6Y26p-LyQgo-tS9t9-vxeni-RGFOK-RkLMu';
         const API_URL = `https://api.appsheet.com/api/v2/apps/${APP_ID}/tables`;
 
         // Elements
         const elements = {
-            loginForm: document.getElementById('loginForm'),
-            paymentData: document.getElementById('paymentData'),
             loginBtn: document.getElementById('loginBtn'),
-            logoutBtn: document.getElementById('logoutBtn'),
             username: document.getElementById('username'),
             password: document.getElementById('password'),
-            employeeInfo: document.getElementById('employeeInfo'),
-            paymentTableBody: document.getElementById('paymentTableBody'),
             loadingOverlay: document.getElementById('loadingOverlay')
         };
 
@@ -103,98 +70,62 @@
             }).showToast();
         };
 
-        // API functions
-        const fetchData = async (url, options) => {
+        // Login function
+        const login = async () => {
+            const username = elements.username.value;
+            const password = elements.password.value;
+
+            if (!username || !password) {
+                showToast('Vui lòng nhập đầy đủ thông tin', 'error');
+                return;
+            }
+
+            showLoading();
             try {
-                const response = await fetch(url, {
-                    ...options,
+                // Query the NguoiDung table to verify credentials
+                const response = await fetch(`${API_URL}/NguoiDung/Action`, {
+                    method: 'POST',
                     headers: {
                         'ApplicationAccessKey': ACCESS_KEY,
                         'Content-Type': 'application/json',
-                        ...options.headers,
                     },
+                    body: JSON.stringify({
+                        Action: "Find",
+                        Properties: {
+                            Selector: `Filter(NguoiDung, [TaiKhoan] = "${username}" AND [MatKhau] = "${password}")`
+                        }
+                    })
                 });
-                if (!response.ok) throw new Error('Network response was not ok');
-                return await response.json();
-            } catch (error) {
-                console.error('API Error:', error);
-                throw error;
-            }
-        };
 
-        // Login function
- const login = async () => {
-    const email = elements.username.value;
-    if (!email) {
-        showToast('Vui lòng nhập email', 'error');
-        return;
-    }
-
-    showLoading();
-    try {
-        // Fetch user's payment data
-        const result = await fetchData(`${API_URL}/Pay/Action`, {
-            method: 'POST',
-            body: JSON.stringify({
-                Action: "Find",
-                Properties: {
-                    Selector: `Filter(Pay, [nguoi_tao] = "${email}")`
+                if (!response.ok) {
+                    throw new Error('Lỗi kết nối');
                 }
-            })
-        });
 
-        if (result && Array.isArray(result) && result.length > 0) {
-            // Login successful
-            localStorage.setItem('userEmail', email);
-            showToast('Đăng nhập thành công!');
-            
-            // Chuyển hướng đến quay_so.html
-            window.location.href = 'quay_so.html';
-        } else {
-            showToast('Không tìm thấy dữ liệu cho email này', 'error');
-        }
-    } catch (error) {
-        showToast('Lỗi đăng nhập: ' + error.message, 'error');
-    } finally {
-        hideLoading();
-    }
-};
+                const result = await response.json();
 
-
-        // Display payment data
-        const displayPaymentData = (data) => {
-            elements.paymentTableBody.innerHTML = data.map(payment => `
-                <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${payment.ID}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${payment.Name}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${payment.Amount}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${payment.Status}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${payment.ngay_ho_so}</td>
-                </tr>
-            `).join('');
-        };
-
-        // Logout function
-        const logout = () => {
-            localStorage.removeItem('userEmail');
-            elements.username.value = '';
-            elements.password.value = '';
-            elements.loginForm.classList.remove('hidden');
-            elements.paymentData.classList.add('hidden');
-            elements.employeeInfo.textContent = '';
-            elements.paymentTableBody.innerHTML = '';
-            showToast('Đã đăng xuất');
+                if (result && Array.isArray(result) && result.length > 0) {
+                    // Store login status and user info if needed
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('userInfo', JSON.stringify(result[0]));
+                    
+                    // Redirect to quay_so.html
+                    window.location.href = 'quay_so.html';
+                } else {
+                    showToast('Tài khoản hoặc mật khẩu không đúng', 'error');
+                }
+            } catch (error) {
+                showToast('Lỗi đăng nhập: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
         };
 
         // Event listeners
         elements.loginBtn.addEventListener('click', login);
-        elements.logoutBtn.addEventListener('click', logout);
-
-        // Check for stored login
-        document.addEventListener('DOMContentLoaded', () => {
-            const storedEmail = localStorage.getItem('userEmail');
-            if (storedEmail) {
-                elements.username.value = storedEmail;
+        
+        // Also allow Enter key to submit
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
                 login();
             }
         });
