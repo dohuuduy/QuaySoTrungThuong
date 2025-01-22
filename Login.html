@@ -129,97 +129,96 @@
 					text: message,
 					duration: 3000,
 					gravity: "top",
-				position: "center",
-                backgroundColor: type === 'error' ? "#dc3545" : "#008A3C",
+					position: "center",
+					backgroundColor: type === 'error' ? "#dc3545" : "#008A3C",
 				}).showToast();
-				};
-				
-				// Remember me functionality
-				const loadSavedCredentials = () => {
+			};
+			
+			// Remember me functionality
+			const loadSavedCredentials = () => {
 				const savedUsername = localStorage.getItem('savedUsername');
 				const savedPassword = localStorage.getItem('savedPassword');
 				const rememberMe = localStorage.getItem('rememberMe');
 				
 				if (rememberMe === 'true' && savedUsername && savedPassword) {
-                elements.username.value = savedUsername;
-                elements.password.value = savedPassword;
-                elements.rememberMe.checked = true;
+					elements.username.value = savedUsername;
+					elements.password.value = savedPassword;
+					elements.rememberMe.checked = true;
 				}
-				};
-				
-				const saveCredentials = () => {
+			};
+			
+			const saveCredentials = () => {
 				if (elements.rememberMe.checked) {
-                localStorage.setItem('savedUsername', elements.username.value);
-                localStorage.setItem('savedPassword', elements.password.value);
-                localStorage.setItem('rememberMe', 'true');
-				} else {
-                localStorage.removeItem('savedUsername');
-                localStorage.removeItem('savedPassword');
-                localStorage.removeItem('rememberMe');
+					localStorage.setItem('savedUsername', elements.username.value);
+					localStorage.setItem('savedPassword', elements.password.value);
+					localStorage.setItem('rememberMe', 'true');
+					} else {
+					localStorage.removeItem('savedUsername');
+					localStorage.removeItem('savedPassword');
+					localStorage.removeItem('rememberMe');
 				}
-				};
-				
-				// Login function
-				const login = async (e) => {
+			};
+			
+			// Login function
+			const login = async (e) => {
 				e.preventDefault();
 				const username = elements.username.value;
 				const password = elements.password.value;
 				
 				if (!username || !password) {
-                showToast('Vui lòng nhập đầy đủ thông tin', 'error');
-                return;
+					showToast('Vui lòng nhập đầy đủ thông tin', 'error');
+					return;
 				}
 				
 				showLoading();
 				try {
-                const response = await fetch(`${API_URL}/NguoiDung/Action`, {
-				method: 'POST',
-				headers: {
-				'ApplicationAccessKey': ACCESS_KEY,
-				'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-				Action: "Find",
-				Properties: {
-				Selector: `Filter(NguoiDung, [TaiKhoan] = "${username}" AND [MatKhau] = "${password}")`
+					const response = await fetch(`${API_URL}/NguoiDung/Action`, {
+						method: 'POST',
+						headers: {
+							'ApplicationAccessKey': ACCESS_KEY,
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({
+							Action: "Find",
+							Properties: {
+								Selector: `Filter(NguoiDung, [TaiKhoan] = "${username}" AND [MatKhau] = "${password}")`
+							}
+						})
+					});
+					
+					if (!response.ok) {
+						throw new Error('Lỗi kết nối');
+					}
+					
+					const result = await response.json();
+					
+					if (result && Array.isArray(result) && result.length > 0) {
+						saveCredentials();
+						localStorage.setItem('isLoggedIn', 'true');
+						localStorage.setItem('userInfo', JSON.stringify(result[0]));
+						window.location.href = 'quay_so.html';
+						} else {
+						showToast('Tài khoản hoặc mật khẩu không đúng', 'error');
+					}
+					} catch (error) {
+					showToast('Lỗi đăng nhập: ' + error.message, 'error');
+					} finally {
+					hideLoading();
 				}
-				})
-                });
-				
-                if (!response.ok) {
-				throw new Error('Lỗi kết nối');
-                }
-				
-                const result = await response.json();
-				
-                if (result && Array.isArray(result) && result.length > 0) {
-				saveCredentials();
-				localStorage.setItem('isLoggedIn', 'true');
-				localStorage.setItem('userInfo', JSON.stringify(result[0]));
-				window.location.href = 'quay_so.html';
-                } else {
-				showToast('Tài khoản hoặc mật khẩu không đúng', 'error');
-                }
-				} catch (error) {
-                showToast('Lỗi đăng nhập: ' + error.message, 'error');
-				} finally {
-                hideLoading();
-				}
-				};
-				
-				// Event listeners
-				elements.loginForm.addEventListener('submit', login);
-				
-				elements.togglePassword.addEventListener('click', () => {
+			};
+			
+			// Event listeners
+			elements.loginForm.addEventListener('submit', login);
+			
+			elements.togglePassword.addEventListener('click', () => {
 				const type = elements.password.getAttribute('type') === 'password' ? 'text' : 'password';
 				elements.password.setAttribute('type', type);
 				elements.togglePassword.classList.toggle('fa-eye');
 				elements.togglePassword.classList.toggle('fa-eye-slash');
-				});
-				
-				// Load saved credentials on page load
-				document.addEventListener('DOMContentLoaded', loadSavedCredentials);
-				</script>
-				</body>
-				</html>
-								
+			});
+			
+			// Load saved credentials on page load
+			document.addEventListener('DOMContentLoaded', loadSavedCredentials);
+		</script>
+	</body>
+</html>
