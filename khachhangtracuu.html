@@ -1,114 +1,124 @@
 <!DOCTYPE html>
 <html lang="vi">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hệ Thống Tra Cứu Quay Thưởng</title>
-    
+
     <!-- Load resources first -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.tailwindcss.com?v=3.4.1"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+
     <!-- Define JavaScript variables and functions -->
     <script>
-        // Global variables
-        var appId = '1aa9c9a1-1792-412c-b21a-cceeeb78c269';
-        var accessKey = 'V2-qMcxL-PdTKn-6Y26p-LyQgo-tS9t9-vxeni-RGFOK-RkLMu';
-        var region = 'www';
-        var tableName = 'MaSoQuayThuong';
-        var customerTableName = 'KhachHang';
+      // Global variables
+      var appId = "1aa9c9a1-1792-412c-b21a-cceeeb78c269";
+      var accessKey = "V2-qMcxL-PdTKn-6Y26p-LyQgo-tS9t9-vxeni-RGFOK-RkLMu";
+      var region = "www";
+      var tableName = "MaSoQuayThuong";
+      var customerTableName = "KhachHang";
 
-        // API Request Function
-        function apiRequest(action, data, table = tableName) {
-            var apiUrl = `https://${region}.appsheet.com/api/v2/apps/${appId}/tables/${table}/Action`;
-            return $.ajax({
-                url: apiUrl,
-                method: 'POST',
-                headers: {
-                    'ApplicationAccessKey': accessKey,
-                    'Content-Type': 'application/json'
-                },
-                data: JSON.stringify({
-                    Action: action,
-                    Properties: {
-                        Locale: 'vi-VN',
-                        Timezone: 'Asia/Ho_Chi_Minh'
-                    },
-                    ...data
-                })
-            });
-        }
+      // API Request Function
+      function apiRequest(action, data, table = tableName) {
+        var apiUrl = `https://${region}.appsheet.com/api/v2/apps/${appId}/tables/${table}/Action`;
+        return $.ajax({
+          url: apiUrl,
+          method: "POST",
+          headers: {
+            ApplicationAccessKey: accessKey,
+            "Content-Type": "application/json",
+          },
+          data: JSON.stringify({
+            Action: action,
+            Properties: {
+              Locale: "vi-VN",
+              Timezone: "Asia/Ho_Chi_Minh",
+            },
+            ...data,
+          }),
+        });
+      }
 
-        // Get Customer Details Function
-// Get Customer Details Function
-async function getCustomerDetails(customerId) {
-    try {
-        const response = await apiRequest('Find', {
-            Selector: {
-                Filter: `[MaKhachHang] = '${customerId}'`
-            }
-        }, customerTableName);
+      // Get Customer Details Function
+      // Get Customer Details Function
+      async function getCustomerDetails(customerId) {
+        try {
+          const response = await apiRequest(
+            "Find",
+            {
+              Selector: {
+                Filter: `[MaKhachHang] = '${customerId}'`,
+              },
+            },
+            customerTableName
+          );
 
-        if (response && response.length > 0) {
+          if (response && response.length > 0) {
             // Lọc kết quả để đảm bảo chính xác mã khách hàng
-            const exactMatch = response.find(customer => 
-                customer.MaKhachHang && 
+            const exactMatch = response.find(
+              (customer) =>
+                customer.MaKhachHang &&
                 customer.MaKhachHang.toLowerCase() === customerId.toLowerCase()
             );
-            
+
             return exactMatch || null;
+          }
+          return null;
+        } catch (error) {
+          console.error("Lỗi khi lấy thông tin khách hàng:", error);
+          return null;
         }
-        return null;
-    } catch (error) {
-        console.error("Lỗi khi lấy thông tin khách hàng:", error);
-        return null;
-    }
-}
+      }
 
-        // Display Customer Details Function
-        function displayCustomerDetails(customerData) {
-            var detailsDiv = document.getElementById('customerDetails');
-            var nameInput = document.getElementById('customerName');
-            var phoneInput = document.getElementById('customerPhone');
+      // Display Customer Details Function
+      function displayCustomerDetails(customerData) {
+        var detailsDiv = document.getElementById("customerDetails");
+        var nameInput = document.getElementById("customerName");
+        var phoneInput = document.getElementById("customerPhone");
 
-            if (customerData) {
-                nameInput.value = customerData.HoTenKhachHang || 'Không có thông tin';
-                phoneInput.value = customerData.SoDienThoai || 'Không có thông tin';
-                detailsDiv.classList.remove('hidden');
-            } else {
-                detailsDiv.classList.add('hidden');
-                nameInput.value = '';
-                phoneInput.value = '';
-            }
+        if (customerData) {
+          nameInput.value = customerData.HoTenKhachHang || "Không có thông tin";
+          phoneInput.value = customerData.SoDienThoai || "Không có thông tin";
+          detailsDiv.classList.remove("hidden");
+        } else {
+          detailsDiv.classList.add("hidden");
+          nameInput.value = "";
+          phoneInput.value = "";
         }
+      }
 
-        // Date Formatting Function
-        function formatDate(dateString) {
-            if (!dateString) return '';
-            var date = new Date(dateString);
-            return date.toLocaleDateString('vi-VN', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
+      // Date Formatting Function
+      function formatDate(dateString) {
+        if (!dateString) return "";
+        var date = new Date(dateString);
+        return date.toLocaleDateString("vi-VN", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
 
-        // Display Customer Info Function
-        function displayCustomerInfo(data) {
-            var infoDiv = document.getElementById('customerInfo');
-            
-            var sortedData = data.sort(function(a, b) {
-                return new Date(b.NgayCap) - new Date(a.NgayCap);
-            });
-            
-            var total = data.length;
-            
-            var html = `
+      // Display Customer Info Function
+      function displayCustomerInfo(data) {
+        var infoDiv = document.getElementById("customerInfo");
+
+        var sortedData = data.sort(function (a, b) {
+          return new Date(b.NgayCap) - new Date(a.NgayCap);
+        });
+
+        var total = data.length;
+
+        var html = `
                 <div class="p-6 bg-white/95 rounded-xl shadow-lg animate-fade-in">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">
                         Thông tin mã số quay thưởng của khách hàng
@@ -131,276 +141,310 @@ async function getCustomerDetails(customerId) {
                                         Kết Quả Quay
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Ngày Cấp
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Ngày Cập Nhật
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Người Cấp
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Ghi Chú
                                     </th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">`;
 
-            sortedData.forEach(function(item, index) {
-                var rowClass = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
-                html += `
+        sortedData.forEach(function (item, index) {
+          var rowClass = index % 2 === 0 ? "bg-white" : "bg-gray-50";
+          html += `
                     <tr class="${rowClass} hover:bg-gray-100 transition-colors">
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            ${item.idMaSoQuayThuong || ''}
+                            ${item.idMaSoQuayThuong || ""}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            ${item.MaGiaiThuong || ''}
+                            ${item.MaGiaiThuong || ""}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            ${item.TinhTrangQuay || ''}
+                            ${item.TinhTrangQuay || ""}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            ${item.KetQuaQuay || 'Chưa có kết quả'}
+                            ${item.KetQuaQuay || "Chưa có kết quả"}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            ${formatDate(item.NgayCap)}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            ${formatDate(item.NgayCapNhat)}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            ${item.NguoiCap || ''}
-                        </td>
+
                         <td class="px-6 py-4 text-sm text-gray-700">
-                            ${item.GhiChu || ''}
+                            ${item.GhiChu || ""}
                         </td>
                     </tr>
                 `;
-            });
+        });
 
-            html += `
+        html += `
                             </tbody>
                         </table>
                     </div>
                 </div>
             `;
-            
-            infoDiv.innerHTML = html;
-            infoDiv.classList.remove('hidden');
-        }
 
-        // Show Notification Function
-        function showNotification(message, type) {
-            var notificationDiv = document.getElementById('notification');
-            var bgColor = type === 'success' ? 'bg-green-100' :
-                type === 'error' ? 'bg-red-100' : 'bg-blue-100';
-            var textColor = type === 'success' ? 'text-green-700' :
-                type === 'error' ? 'text-red-700' : 'text-blue-700';
-            var icon = type === 'success' ? 'fa-check-circle' :
-                type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+        infoDiv.innerHTML = html;
+        infoDiv.classList.remove("hidden");
+      }
 
-            notificationDiv.innerHTML = `
+      // Show Notification Function
+      function showNotification(message, type) {
+        var notificationDiv = document.getElementById("notification");
+        var bgColor =
+          type === "success"
+            ? "bg-green-100"
+            : type === "error"
+            ? "bg-red-100"
+            : "bg-blue-100";
+        var textColor =
+          type === "success"
+            ? "text-green-700"
+            : type === "error"
+            ? "text-red-700"
+            : "text-blue-700";
+        var icon =
+          type === "success"
+            ? "fa-check-circle"
+            : type === "error"
+            ? "fa-exclamation-circle"
+            : "fa-info-circle";
+
+        notificationDiv.innerHTML = `
                 <div class="p-4 rounded-xl text-center ${bgColor} ${textColor} animate-fade-in">
                     <i class="fas ${icon} mr-2"></i>
                     ${message}
                 </div>
             `;
-            notificationDiv.classList.remove('hidden');
+        notificationDiv.classList.remove("hidden");
 
-            setTimeout(function() {
-                notificationDiv.classList.add('hidden');
-            }, 3000);
+        setTimeout(function () {
+          notificationDiv.classList.add("hidden");
+        }, 3000);
+      }
+
+      // Check Customer ID Function
+      async function checkCustomerId() {
+        var customerInput = document.getElementById("customerId").value.trim();
+        var confirmButton = document.getElementById("confirmButton");
+        var spinner = document.getElementById("spinner");
+        var buttonText = document.querySelector(".button-text");
+
+        if (!customerInput) {
+          showNotification("Vui lòng nhập mã khách hàng.", "error");
+          return;
         }
 
-        // Check Customer ID Function
-        async function checkCustomerId() {
-            var customerInput = document.getElementById("customerId").value.trim();
-            var confirmButton = document.getElementById("confirmButton");
-            var spinner = document.getElementById("spinner");
-            var buttonText = document.querySelector(".button-text");
+        // Disable button and show spinner
+        confirmButton.disabled = true;
+        spinner.classList.remove("hidden");
+        buttonText.classList.add("hidden");
 
-            if (!customerInput) {
-                showNotification("Vui lòng nhập mã khách hàng.", "error");
-                return;
-            }
+        try {
+          // Get customer details first
+          const customerDetails = await getCustomerDetails(customerInput);
+          displayCustomerDetails(customerDetails);
 
-            // Disable button and show spinner
-            confirmButton.disabled = true;
-            spinner.classList.remove("hidden");
-            buttonText.classList.add("hidden");
+          // Get reward codes
+          const response = await apiRequest("Find", {
+            Selector: {
+              Filter: `[MaKhachHang] = '${customerInput}'`,
+            },
+          });
 
-            try {
-                // Get customer details first
-                const customerDetails = await getCustomerDetails(customerInput);
-                displayCustomerDetails(customerDetails);
+          // Filter exact matches
+          const filteredResults = response.filter(function (item) {
+            return (
+              item.MaKhachHang &&
+              item.MaKhachHang.toLowerCase() === customerInput.toLowerCase()
+            );
+          });
 
-                // Get reward codes
-                const response = await apiRequest('Find', {
-                    Selector: {
-                        Filter: `[MaKhachHang] = '${customerInput}'`
-                    }
-                });
-
-                // Filter exact matches
-                const filteredResults = response.filter(function(item) {
-                    return item.MaKhachHang && item.MaKhachHang.toLowerCase() === customerInput.toLowerCase();
-                });
-
-                if (filteredResults && filteredResults.length > 0) {
-                    showNotification(`Tìm thấy ${filteredResults.length} mã số quay thưởng.`, "success");
-                    displayCustomerInfo(filteredResults);
-                } else {
-                    showNotification("Không tìm thấy thông tin mã số quay thưởng.", "error");
-                    document.getElementById('customerInfo').classList.add('hidden');
-                }
-            } catch (error) {
-                console.error("Lỗi:", error);
-                showNotification("Lỗi kết nối đến hệ thống. Vui lòng thử lại sau.", "error");
-            }
-
-            // Enable button and hide spinner
-            confirmButton.disabled = false;
-            spinner.classList.remove("hidden");
-            buttonText.classList.remove("hidden");
+          if (filteredResults && filteredResults.length > 0) {
+            showNotification(
+              `Tìm thấy ${filteredResults.length} mã số quay thưởng.`,
+              "success"
+            );
+            displayCustomerInfo(filteredResults);
+          } else {
+            showNotification(
+              "Không tìm thấy thông tin mã số quay thưởng.",
+              "error"
+            );
+            document.getElementById("customerInfo").classList.add("hidden");
+          }
+        } catch (error) {
+          console.error("Lỗi:", error);
+          showNotification(
+            "Lỗi kết nối đến hệ thống. Vui lòng thử lại sau.",
+            "error"
+          );
         }
 
-        // Add event listeners when document is ready
-        $(document).ready(function() {
-            // Add Enter key event listener
-            $('#customerId').on('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    checkCustomerId();
-                }
-            });
+        // Enable button and hide spinner
+        confirmButton.disabled = false;
+        spinner.classList.remove("hidden");
+        buttonText.classList.remove("hidden");
+      }
+
+      // Add event listeners when document is ready
+      $(document).ready(function () {
+        // Add Enter key event listener
+        $("#customerId").on("keypress", function (e) {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            checkCustomerId();
+          }
         });
+      });
     </script>
 
     <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: linear-gradient(135deg, #008A3C 0%, #005824 100%);
-        }
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        background: linear-gradient(135deg, #008a3c 0%, #005824 100%);
+      }
 
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
 
-        .hover-card {
-            transition: all 0.3s ease;
-        }
+      .hover-card {
+        transition: all 0.3s ease;
+      }
 
-        .hover-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
+      .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
 
-        .input-focus:focus {
-            box-shadow: 0 0 0 3px rgba(0, 138, 60, 0.5);
-        }
+      .input-focus:focus {
+        box-shadow: 0 0 0 3px rgba(0, 138, 60, 0.5);
+      }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
         }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-out;
-        }
+      .animate-fade-in {
+        animation: fadeIn 0.5s ease-out;
+      }
 
-        .table-container {
-            overflow-x: auto;
-            max-height: 500px;
-            overflow-y: auto;
-        }
+      .table-container {
+        overflow-x: auto;
+        max-height: 500px;
+        overflow-y: auto;
+      }
 
-        .table-container table {
-            min-width: 100%;
-        }
+      .table-container table {
+        min-width: 100%;
+      }
 
-        .table-container th {
-            position: sticky;
-            top: 0;
-            background-color: #f8fafc;
-            z-index: 10;
-        }
+      .table-container th {
+        position: sticky;
+        top: 0;
+        background-color: #f8fafc;
+        z-index: 10;
+      }
 
-        .content-container {
-            max-width: 90vw;
-            width: 1400px;
-        }
+      .content-container {
+        max-width: 90vw;
+        width: 1400px;
+      }
     </style>
-</head>
+  </head>
 
-<body class="min-h-screen flex items-center justify-center p-4 md:p-6">
+  <body class="min-h-screen flex items-center justify-center p-4 md:p-6">
     <div class="content-container">
-        <!-- Header Section -->
-        <div class="text-center mb-10 animate-fade-in">
-            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
-                HỆ THỐNG TRA CỨU QUAY THƯỞNG
-            </h1>
-            <p class="text-white/90 text-lg md:text-xl font-medium">
-                Nhập mã khách hàng để tra cứu thông tin quay thưởng
-            </p>
-			</div>
+      <!-- Header Section -->
+      <div class="text-center mb-10 animate-fade-in">
+        <h1
+          class="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight"
+        >
+          HỆ THỐNG TRA CỨU QUAY THƯỞNG
+        </h1>
+        <p class="text-white/90 text-lg md:text-xl font-medium">
+          Nhập mã khách hàng để tra cứu thông tin quay thưởng
+        </p>
+      </div>
 
-        <!-- Main Container -->
-        <div class="glass-effect rounded-3xl p-6 md:p-8 shadow-2xl animate-fade-in">
-            <!-- Input Section -->
-            <div class="max-w-xl mx-auto mb-10">
-                <label class="block text-white text-sm font-medium mb-3">Mã Khách Hàng</label>
-                <div class="relative">
-                    <input id="customerId" type="text" 
-                           placeholder="Nhập mã khách hàng của bạn..." 
-                           class="w-full px-5 py-4 rounded-xl bg-white/90 text-gray-800 text-lg 
-                                  focus:outline-none input-focus transition-all duration-300
-                                  border border-transparent focus:border-green-300">
-                    
-                    <!-- Customer Info Section -->
-                    <div id="customerDetails" class="mt-4 p-4 bg-white/90 rounded-xl hidden">
-                        <div class="space-y-3">
-                            <div>
-                                <label class="block text-gray-600 text-sm font-medium mb-1">Họ và Tên Khách Hàng</label>
-                                <input id="customerName" type="text" readonly
-                                       class="w-full px-4 py-2 rounded-lg bg-gray-50 text-gray-800 border border-gray-200">
-                            </div>
-                            <div>
-                                <label class="block text-gray-600 text-sm font-medium mb-1">Số Điện Thoại</label>
-                                <input id="customerPhone" type="text" readonly
-                                       class="w-full px-4 py-2 rounded-lg bg-gray-50 text-gray-800 border border-gray-200">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <button id="confirmButton" onclick="checkCustomerId()" 
-                            class="mt-4 w-full px-6 py-4 bg-[#008A3C] hover:bg-[#006b2d] text-white 
-                                   font-semibold rounded-xl shadow-lg transition-all duration-300
-                                   hover:shadow-xl active:transform active:scale-95 flex justify-center items-center">
-                        <span class="button-text">Tra cứu</span>
-                        <span id="spinner" class="hidden ml-2">
-                            <i class="fas fa-spinner fa-spin"></i>
-                        </span>
-                    </button>
+      <!-- Main Container -->
+      <div
+        class="glass-effect rounded-3xl p-6 md:p-8 shadow-2xl animate-fade-in"
+      >
+        <!-- Input Section -->
+        <div class="max-w-xl mx-auto mb-10">
+          <label class="block text-white text-sm font-medium mb-3"
+            >Mã Khách Hàng</label
+          >
+          <div class="relative">
+            <input
+              id="customerId"
+              type="text"
+              placeholder="Nhập mã khách hàng của bạn..."
+              class="w-full px-5 py-4 rounded-xl bg-white/90 text-gray-800 text-lg focus:outline-none input-focus transition-all duration-300 border border-transparent focus:border-green-300"
+            />
+
+            <!-- Customer Info Section -->
+            <div
+              id="customerDetails"
+              class="mt-4 p-4 bg-white/90 rounded-xl hidden"
+            >
+              <div class="space-y-3">
+                <div>
+                  <label class="block text-gray-600 text-sm font-medium mb-1"
+                    >Họ và Tên Khách Hàng</label
+                  >
+                  <input
+                    id="customerName"
+                    type="text"
+                    readonly
+                    class="w-full px-4 py-2 rounded-lg bg-gray-50 text-gray-800 border border-gray-200"
+                  />
                 </div>
-                <div id="notification" class="hidden mt-4 animate-fade-in"></div>
+                <div>
+                  <label class="block text-gray-600 text-sm font-medium mb-1"
+                    >Số Điện Thoại</label
+                  >
+                  <input
+                    id="customerPhone"
+                    type="text"
+                    readonly
+                    class="w-full px-4 py-2 rounded-lg bg-gray-50 text-gray-800 border border-gray-200"
+                  />
+                </div>
+              </div>
             </div>
 
-            <!-- Results Section -->
-            <div id="customerInfo" class="hidden mt-6 animate-fade-in overflow-hidden"></div>
+            <button
+              id="confirmButton"
+              onclick="checkCustomerId()"
+              class="mt-4 w-full px-6 py-4 bg-[#008A3C] hover:bg-[#006b2d] text-white font-semibold rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl active:transform active:scale-95 flex justify-center items-center"
+            >
+              <span class="button-text">Tra cứu</span>
+              <span id="spinner" class="hidden ml-2">
+                <i class="fas fa-spinner fa-spin"></i>
+              </span>
+            </button>
+          </div>
+          <div id="notification" class="hidden mt-4 animate-fade-in"></div>
         </div>
 
-        <!-- Footer -->
-        <footer class="text-center mt-8 text-white/80 text-sm">
-            <p>© 2024 Hệ Thống Tra Cứu Quay Thưởng.</p>
-        </footer>
+        <!-- Results Section -->
+        <div
+          id="customerInfo"
+          class="hidden mt-6 animate-fade-in overflow-hidden"
+        ></div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="text-center mt-8 text-white/80 text-sm">
+        <p>© 2024 Hệ Thống Tra Cứu Quay Thưởng.</p>
+      </footer>
     </div>
-</body>
+  </body>
 </html>
