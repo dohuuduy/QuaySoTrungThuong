@@ -33,14 +33,19 @@
 			}
 			
 			.sidebar:hover {
-            width: 250px;
+			width: 250px;
 			}
 			
-			/* Điều chỉnh khoảng cách main-content khi sidebar thay đổi */
 			.sidebar:hover + .main-content {
-            margin-left: 250px;
+			margin-left: 250px;
 			}
 			
+			.sidebar:hover + .navbar {
+			width: calc(100% - 250px);
+			left: 250px;
+			}
+			}
+			}
 			.main-content {
             margin-left: 70px;
             padding: 20px;
@@ -49,23 +54,28 @@
 			}
 			
 			/* Các phần CSS khác giữ nguyên như trước */
-			.sidebar-header {
-            padding: 0.5rem;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-			}
-			
-			<!-- /* Phần CSS còn lại giữ nguyên như trước */ -->
-			
 			.sidebar-header img {
-            max-width: 40px;
-            height: auto;
+			max-width: 40px;
+			height: auto;
+			border-radius: 50%;
+			border: 3px solid var(--contrast-color);
+			box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+			transition: transform 0.3s ease;
 			}
 			
+			.sidebar-header img:hover {
+			transform: scale(1.1);
+			}
+			@media (min-width: 769px) {
+			.main-content {
+			transition: margin-left 0.3s ease;
+			}
+			}
+			.sidebar-header {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			}
 			.nav-link {
             color: var(--contrast-color);
             padding: 0.8rem 1rem;
@@ -100,18 +110,19 @@
             padding-top: 80px;
 			}
 			
+			
 			.navbar {
-            position: fixed;
-            width: calc(100% - 70px);
-            margin-left: 70px;
-            background-color: var(--contrast-color);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
+			position: relative;
+			width: 100%;
+			background-color: var(--contrast-color);
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			z-index: 1000;
 			}
 			
 			.navbar-brand {
             color: var(--primary-color);
             font-weight: bold;
+			
 			}
 			
 			@media (max-width: 768px) {
@@ -119,11 +130,16 @@
 			width: 100%;
 			margin-left: 0;
             }
+			@media (min-width: 769px) {
+			.navbar {
+			position: fixed;
+			width: calc(100% - 70px);
+			left: 70px;
+			}
             
-            .main-content {
-			margin-left: 0;
-			padding-left: 80px;
-            }
+			
+			.main-content {
+			padding-top: 80px;
 			}
 			
 			.card {
@@ -138,23 +154,24 @@
 		</style>
 	</head>
 	<body>
-	    <nav class="navbar">
+		
+		<nav class="navbar">
 			<div class="container-fluid">
-				<span class="navbar-brand">NHA KHOA THANH TRIỀU</span>
-			</div>
+				
+				<div class="ms-auto">
+					<!-- Nội dung căn phải -->
+					<span class="navbar-brand">NHA KHOA THANH TRIỀU</span>
+				</div>
+			</div>	
+			
 		</nav>
+		
 		
 		<div class="sidebar">
 			<div class="sidebar-header">
 				<img src="thanh_trieu_logo.png" alt="Logo" class="img-fluid">
 			</div>
 			<ul class="nav flex-column">
-				<li class="nav-item">
-					<a class="nav-link" href="dashboard.html" title="Dashboard">
-						<i class="fas fa-home"></i>
-						<span>Dashboard</span>
-					</a>
-				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="khachhangtracuu.html" title="Tra cứu mã dự thưởng">
 						<i class="fas fa-search"></i>
@@ -166,19 +183,19 @@
 						<i class="fas fa-list"></i>
 						<span>Danh sách mã dự thưởng</span>
 					</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="danh_sach_ma_du_thuong.html" title="Danh sách mã dự thưởng NEW">
-						<i class="fas fa-list"></i>
-						<span>Danh sách mã dự thưởng NEW</span>
-					</a>
-				</li>
-				<li class="nav-item mt-auto">
-					<a class="nav-link" href="#" id="btnQuaySo" title="Quay số">
-						<i class="fas fa-dice"></i>
-						<span>Quay số</span>
-					</a>
-				</li>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="danh_sach_ma_du_thuong.html" title="Danh sách mã dự thưởng NEW">
+							<i class="fas fa-list"></i>
+							<span>Danh sách mã dự thưởng NEW</span>
+						</a>
+					</li>
+					<li class="nav-item mt-auto">
+						<a class="nav-link" href="#" id="btnQuaySo" title="Quay số">
+							<i class="fas fa-dice"></i>
+							<span>Quay số</span>
+						</a>
+					</li>
 			</ul>
 		</div>
 		
