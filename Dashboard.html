@@ -54,12 +54,12 @@
 			}
 			
 			/* Các phần CSS khác giữ nguyên như trước */
-.sidebar-header img {
-    max-width: 70px;
-    max-height: 70px;
-    object-fit: contain;
-    border-radius: 50%;
-}
+			.sidebar-header img {
+			max-width: 40px;
+			max-height: 40px;
+			object-fit: contain;
+			border-radius: 50%;
+			}
 			
 			.sidebar-header img:hover {
 			transform: scale(1.1);
@@ -69,23 +69,23 @@
 			transition: margin-left 0.3s ease;
 			}
 			}
-.sidebar-header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 1.5rem 0;
-}
-
-.sidebar-header .logo-container {
-    width: 100px;
-    height: 100px;
-    background-color: white;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
+			.sidebar-header {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding: 1.5rem 0;
+			}
+			
+			.sidebar-header .logo-container {
+			width: 60px;
+			height: 60px;
+			background-color: white;
+			border-radius: 50%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+			}
 			.nav-link {
             color: var(--contrast-color);
             padding: 0.8rem 1rem;
@@ -179,7 +179,9 @@
 		
 		<div class="sidebar">
 			<div class="sidebar-header">
-				<img src="thanh_trieu_logo.png" alt="Logo" class="img-fluid">
+				<div class="logo-container">
+					<img src="thanh_trieu_logo.png" alt="Logo" class="img-fluid">
+				</div>
 			</div>
 			<ul class="nav flex-column">
 				<li class="nav-item">
@@ -193,21 +195,21 @@
 						<i class="fas fa-list"></i>
 						<span>Danh sách mã dự thưởng</span>
 					</a>
-					</li>
-
-        
-					<li class="nav-item">
-						<a class="nav-link" href="danh_sach_ma_du_thuong.html" title="Danh sách mã dự thưởng NEW">
-							<i class="fas fa-list"></i>
-							<span>Danh sách mã dự thưởng NEW</span>
-						</a>
-					</li>
-					<li class="nav-item mt-auto">
-						<a class="nav-link" href="#" id="btnQuaySo" title="Quay số">
-							<i class="fas fa-dice"></i>
-							<span>Quay số</span>
-						</a>
-					</li>
+				</li>
+				
+				
+				<li class="nav-item">
+					<a class="nav-link" href="danh_sach_ma_du_thuong.html" title="Danh sách mã dự thưởng NEW">
+						<i class="fas fa-list"></i>
+						<span>Danh sách mã dự thưởng NEW</span>
+					</a>
+				</li>
+				<li class="nav-item mt-auto">
+					<a class="nav-link" href="#" id="btnQuaySo" title="Quay số">
+						<i class="fas fa-dice"></i>
+						<span>Quay số</span>
+					</a>
+				</li>
 			</ul>
 		</div>
 		
@@ -257,85 +259,86 @@
 							'Content-Type': 'application/json'
 						},
 						body: JSON.stringify({
-							Action: "Find",
-							Properties: {
-								Locale: 'vi-VN',
-								Timezone: 'Asia/Ho_Chi_Minh'
-							},
-							Selector: selector
+						Action: "Find",
+						Properties: {
+						Locale: 'vi-VN',
+						Timezone: 'Asia/Ho_Chi_Minh'
+						},
+						Selector: selector
 						})
-					});
-					if (!response.ok) {
+						});
+						if (!response.ok) {
 						throw new Error(`Lỗi HTTP! Trạng thái: ${response.status}`);
-					}
-					return await response.json();
-					} catch (error) {
-					console.error('Lỗi API:', error);
-					throw error;
-				}
-			}
-			
-			// Hàm format số có dấu chấm
-			function formatNumber(num) {
-				return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-			}
-			
-			// Hàm lấy tổng số khách hàng
-			async function getTongKhachHang() {
-				try {
-					const data = await apiRequest(customersTableName);
-					document.getElementById('tongKhachHang').textContent = formatNumber(data.length);
-					} catch (error) {
-					document.getElementById('tongKhachHang').textContent = 'Lỗi';
-				}
-			}
-			
-			// Hàm lấy tổng số mã dự thưởng
-			async function getTongMaDuThuong() {
-				try {
-					const data = await apiRequest(usersTableName);
-					document.getElementById('tongMaDuThuong').textContent = formatNumber(data.length);
-					} catch (error) {
-					document.getElementById('tongMaDuThuong').textContent = 'Lỗi';
-				}
-			}
-			
-			
-			async function getGiaiThuongPhat() {
-				try {
-					// Thực hiện yêu cầu dữ liệu
-					const data = await apiRequest(usersTableName);
-					
-					// Lọc các dòng có `KetQuaQuay` khác rỗng
-					const filteredData = data.filter(row => row.KetQuaQuay && row.KetQuaQuay.trim() !== '');
-					
-					// Đếm số lượng dòng thỏa mãn và cập nhật vào DOM
-					document.getElementById('giaiThuongPhat').textContent = formatNumber(filteredData.length);
-					} catch (error) {
-					// Hiển thị lỗi nếu xảy ra lỗi trong quá trình xử lý
-					document.getElementById('giaiThuongPhat').textContent = 'Lỗi';
-					console.error('Lỗi khi lấy dữ liệu:', error);
-				}
-			}
-			
-			
-			// Gọi các hàm khi trang được tải
-			document.addEventListener('DOMContentLoaded', () => {
-				getTongKhachHang();
-				getTongMaDuThuong();
-				getGiaiThuongPhat();
-			});
-			
-			document.getElementById('btnQuaySo').addEventListener('click', function(e) {
-				e.preventDefault();
-				const loggedIn = localStorage.getItem('isLoggedIn');
-				
-				if (!loggedIn) {
-					window.location.href = 'Login.html';
-					} else {
-					window.location.href = 'quay_so.html';
-				}
-			});
-		</script>
-	</body>
-</html>
+						}
+						return await response.json();
+						} catch (error) {
+						console.error('Lỗi API:', error);
+						throw error;
+						}
+						}
+						
+						// Hàm format số có dấu chấm
+						function formatNumber(num) {
+						return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+						}
+						
+						// Hàm lấy tổng số khách hàng
+						async function getTongKhachHang() {
+						try {
+						const data = await apiRequest(customersTableName);
+						document.getElementById('tongKhachHang').textContent = formatNumber(data.length);
+						} catch (error) {
+						document.getElementById('tongKhachHang').textContent = 'Lỗi';
+						}
+						}
+						
+						// Hàm lấy tổng số mã dự thưởng
+						async function getTongMaDuThuong() {
+						try {
+						const data = await apiRequest(usersTableName);
+						document.getElementById('tongMaDuThuong').textContent = formatNumber(data.length);
+						} catch (error) {
+						document.getElementById('tongMaDuThuong').textContent = 'Lỗi';
+						}
+						}
+						
+						
+						async function getGiaiThuongPhat() {
+						try {
+						// Thực hiện yêu cầu dữ liệu
+						const data = await apiRequest(usersTableName);
+						
+						// Lọc các dòng có `KetQuaQuay` khác rỗng
+						const filteredData = data.filter(row => row.KetQuaQuay && row.KetQuaQuay.trim() !== '');
+						
+						// Đếm số lượng dòng thỏa mãn và cập nhật vào DOM
+						document.getElementById('giaiThuongPhat').textContent = formatNumber(filteredData.length);
+						} catch (error) {
+						// Hiển thị lỗi nếu xảy ra lỗi trong quá trình xử lý
+						document.getElementById('giaiThuongPhat').textContent = 'Lỗi';
+						console.error('Lỗi khi lấy dữ liệu:', error);
+						}
+						}
+						
+						
+						// Gọi các hàm khi trang được tải
+						document.addEventListener('DOMContentLoaded', () => {
+						getTongKhachHang();
+						getTongMaDuThuong();
+						getGiaiThuongPhat();
+						});
+						
+						document.getElementById('btnQuaySo').addEventListener('click', function(e) {
+						e.preventDefault();
+						const loggedIn = localStorage.getItem('isLoggedIn');
+						
+						if (!loggedIn) {
+						window.location.href = 'Login.html';
+						} else {
+						window.location.href = 'quay_so.html';
+						}
+						});
+						</script>
+						</body>
+						</html>
+												
