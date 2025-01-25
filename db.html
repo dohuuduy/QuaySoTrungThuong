@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Dashboard - NHA KHOA THANH TRIỀU</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+	<style>
+		:root {
+			--primary-color: #008A3C;
+			--contrast-color: #ffffff;
+			--accent-color: #F8F9FA;
+		}
+
+		body {
+			background-color: var(--accent-color);
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			overflow-x: hidden;
+		}
+
+		.navbar {
+			background-color: var(--contrast-color);
+			padding: 10px 20px;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		}
+
+		.navbar-brand {
+			font-size: 1.5rem;
+			color: var(--primary-color);
+			transition: color 0.3s ease;
+		}
+
+		.navbar-brand:hover {
+			color: #005f2c;
+		}
+
+		.logo-navbar {
+			max-height: 50px;
+			margin-right: 15px;
+			border-radius: 5px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		}
+
+		.nav-link {
+			font-size: 1rem;
+			margin-left: 15px;
+			color: var(--primary-color);
+			transition: color 0.3s ease, transform 0.3s ease;
+		}
+
+		.nav-link:hover {
+			color: #005f2c;
+			transform: scale(1.1);
+		}
+
+		.navbar-toggler {
+			border: none;
+		}
+
+		.navbar-toggler-icon {
+			background-color: var(--primary-color);
+			border-radius: 5px;
+			width: 25px;
+			height: 25px;
+			position: relative;
+		}
+
+		.navbar-toggler-icon:after,
+		.navbar-toggler-icon:before {
+			content: "";
+			position: absolute;
+			width: 100%;
+			height: 2px;
+			background-color: var(--contrast-color);
+			top: 50%;
+			left: 0;
+			transform: translateY(-50%);
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+		}
+
+		.navbar-toggler-icon:before {
+			top: 25%;
+		}
+
+		.navbar-toggler-icon:after {
+			top: 75%;
+		}
+
+		.main-content {
+			margin: 20px;
+			padding-top: 80px;
+		}
+
+		.card {
+			border: none;
+			box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+			transition: transform 0.3s ease;
+		}
+
+		.card:hover {
+			transform: translateY(-5px);
+		}
+	</style>
+</head>
+<body>
+	<!-- Navbar -->
+	<nav class="navbar navbar-expand-lg shadow-sm">
+		<div class="container-fluid">
+			<div class="d-flex align-items-center">
+				<img src="thanh_trieu_logo.png" alt="Logo" class="logo-navbar">
+				<span class="navbar-brand mb-0 h1 text-uppercase text-primary fw-bold">
+					NHA KHOA THANH TRIỀU
+				</span>
+			</div>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a class="nav-link active text-primary" href="khachhangtracuu.html">Tra cứu</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link text-primary" href="MaSoQuayThuong.html">Danh sách mã</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link text-primary" href="quay_so.html">Quay số</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<!-- Main Content -->
+	<div class="main-content">
+		<div class="row g-4">
+			<div class="col-md-4">
+				<div class="card text-center p-4">
+					<i class="fas fa-users fa-2x mb-3 text-success"></i>
+					<h3 id="tongKhachHang">0</h3>
+					<p>Tổng số khách hàng</p>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card text-center p-4">
+					<i class="fas fa-ticket-alt fa-2x mb-3 text-primary"></i>
+					<h3 id="tongMaDuThuong">0</h3>
+					<p>Tổng số mã dự thưởng</p>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card text-center p-4">
+					<i class="fas fa-gift fa-2x mb-3 text-warning"></i>
+					<h3 id="giaiThuongPhat">0</h3>
+					<p>Số giải thưởng đã phát</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
