@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="vi">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Dashboard - NHA KHOA THANH TRIỀU</title>
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-		<style>
-			:root {
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - NHA KHOA THANH TRIỀU</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
             --primary-color: #008A3C;
             --contrast-color: #ffffff;
             --accent-color: #F8F9FA;
-			}
-			
-			body {
+        }
+
+        body {
             background-color: var(--accent-color);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow-x: hidden;
-			}
-			
-			.sidebar {
+        }
+
+        .sidebar {
             background-color: var(--primary-color);
             width: 70px;
             position: fixed;
@@ -30,315 +30,265 @@
             z-index: 1050;
             transition: width 0.3s ease;
             overflow: hidden;
-			}
-			
-			.sidebar:hover {
-			width: 250px;
-			}
-			
-			.sidebar:hover + .main-content {
-			margin-left: 250px;
-			}
-			
-			.sidebar:hover + .navbar {
-			width: calc(100% - 250px);
-			left: 250px;
-			}
-			}
-			}
-			.main-content {
+        }
+
+        .sidebar:hover {
+            width: 250px;
+        }
+
+        .sidebar:hover + .main-content {
+            margin-left: 250px;
+        }
+
+        .sidebar:hover + .navbar {
+            width: calc(100% - 250px);
+            left: 250px;
+        }
+
+        .main-content {
             margin-left: 70px;
             padding: 20px;
             padding-top: 80px;
             transition: margin-left 0.3s ease;
-			}
-			
-			/* Các phần CSS khác giữ nguyên như trước */
-			.sidebar-header img {
-			max-width: 30px;
-			max-height: 30px;
-			object-fit: contain;
-			border-radius: 50%;
-			}
-			
-			.sidebar-header img:hover {
-			transform: scale(1.1);
-			}
-			@media (min-width: 769px) {
-			.main-content {
-			transition: margin-left 0.3s ease;
-			}
-			}
-			.sidebar-header {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			padding: 1.5rem 0;
-			}
-			
-			.sidebar-header .logo-container {
-			width: 50px;
-			height: 50px;
-			background-color: white;
-			border-radius: 50%;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-			}
-			.nav-link {
+        }
+
+        .sidebar-header img {
+            max-width: 30px;
+            max-height: 30px;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+
+        .sidebar-header img:hover {
+            transform: scale(1.1);
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem 0;
+        }
+
+        .sidebar-header .logo-container {
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .nav-link {
             color: var(--contrast-color);
             padding: 0.8rem 1rem;
             margin: 0.2rem 0;
             white-space: nowrap;
             position: relative;
-			}
-			
-			.nav-link:hover {
+        }
+
+        .nav-link:hover {
             background-color: rgba(255, 255, 255, 0.1);
             color: var(--contrast-color);
-			}
-			
-			.nav-link i {
+        }
+
+        .nav-link i {
             width: 20px;
             text-align: center;
             margin-right: 1rem;
-			}
-			
-			.nav-link span {
+        }
+
+        .nav-link span {
             opacity: 0;
             transition: opacity 0.3s ease;
-			}
-			
-			.sidebar:hover .nav-link span {
+        }
+
+        .sidebar:hover .nav-link span {
             opacity: 1;
-			}
-			
-			.main-content {
-            margin-left: 70px;
-            padding: 20px;
-            padding-top: 80px;
-			}
-			
-			
-			.navbar {
-			position: relative;
-			width: 100%;
-			background-color: var(--contrast-color);
-			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-			z-index: 1000;
-			}
-			
-			.navbar-brand {
+        }
+
+        .navbar {
+            position: relative;
+            width: 100%;
+            background-color: var(--contrast-color);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .navbar-brand {
             color: var(--primary-color);
             font-weight: bold;
-			
-			}
-			
-			@media (max-width: 768px) {
-            .navbar {
-			width: 100%;
-			margin-left: 0;
-            }
-			@media (min-width: 769px) {
-			.navbar {
-			position: fixed;
-			width: calc(100% - 70px);
-			left: 70px;
-			}
-            
-			
-			.main-content {
-			padding-top: 80px;
-			}
-			
-			.card {
+        }
+
+        .card {
             border: none;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s ease;
-			}
-			
-			.card:hover {
+        }
+
+        .card:hover {
             transform: translateY(-5px);
-			}
-		</style>
-	</head>
-	<body>
-		
-		<nav class="navbar">
-			<div class="container-fluid">
-				
-				<div class="ms-auto">
-					<!-- Nội dung căn phải -->
-					<span class="navbar-brand">NHA KHOA THANH TRIỀU</span>
-				</div>
-			</div>	
-			
-		</nav>
-		
-		
-		<div class="sidebar">
-			<div class="sidebar-header">
-				<div class="logo-container">
-					<img src="thanh_trieu_logo.png" alt="Logo" class="img-fluid">
-				</div>
-			</div>
-			<ul class="nav flex-column">
-				<li class="nav-item">
-					<a class="nav-link" href="khachhangtracuu.html" title="Tra cứu mã dự thưởng">
-						<i class="fas fa-search"></i>
-						<span>Tra cứu mã dự thưởng</span>
-					</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="MaSoQuayThuong.html" title="Danh sách mã dự thưởng">
-						<i class="fas fa-list"></i>
-						<span>Danh sách mã dự thưởng</span>
-					</a>
-				</li>
-				
-				
-				<li class="nav-item">
-					<a class="nav-link" href="danh_sach_ma_du_thuong.html" title="Danh sách mã dự thưởng NEW">
-						<i class="fas fa-list"></i>
-						<span>Danh sách mã dự thưởng NEW</span>
-					</a>
-				</li>
-				<li class="nav-item mt-auto">
-					<a class="nav-link" href="#" id="btnQuaySo" title="Quay số">
-						<i class="fas fa-dice"></i>
-						<span>Quay số</span>
-					</a>
-				</li>
-			</ul>
-		</div>
-		
-		<div class="main-content">
-			<div class="row g-4">
-				<div class="col-md-4">
-					<div class="card text-center p-4">
-						<i class="fas fa-users fa-2x mb-3 text-success"></i>
-						<h3 id="tongKhachHang">0</h3>
-						<p>Tổng số khách hàng</p>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="card text-center p-4">
-						<i class="fas fa-ticket-alt fa-2x mb-3 text-primary"></i>
-						<h3 id="tongMaDuThuong">0</h3>
-						<p>Tổng số mã dự thưởng</p>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="card text-center p-4">
-						<i class="fas fa-gift fa-2x mb-3 text-warning"></i>
-						<h3 id="giaiThuongPhat">0</h3>
-						<p>Số giải thưởng đã phát</p>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- Phần HTML trước đó giữ nguyên -->
-		
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-		<script>
-			const appId = '1aa9c9a1-1792-412c-b21a-cceeeb78c269';
-			const accessKey = 'V2-qMcxL-PdTKn-6Y26p-LyQgo-tS9t9-vxeni-RGFOK-RkLMu';
-			const region = 'www';
-			const usersTableName = 'MaSoQuayThuong';
-			const customersTableName = 'KhachHang';
-			
-			// Hàm request API sử dụng fetch
-			async function apiRequest(tableName, selector = {}) {
-				const apiUrl = `https://${region}.appsheet.com/api/v2/apps/${appId}/tables/${tableName}/Action`;
-				try {
-					const response = await fetch(apiUrl, {
-						method: 'POST',
-						headers: {
-							'ApplicationAccessKey': accessKey,
-							'Content-Type': 'application/json'
-						},
-						body: JSON.stringify({
-						Action: "Find",
-						Properties: {
-						Locale: 'vi-VN',
-						Timezone: 'Asia/Ho_Chi_Minh'
-						},
-						Selector: selector
-						})
-						});
-						if (!response.ok) {
-						throw new Error(`Lỗi HTTP! Trạng thái: ${response.status}`);
-						}
-						return await response.json();
-						} catch (error) {
-						console.error('Lỗi API:', error);
-						throw error;
-						}
-						}
-						
-						// Hàm format số có dấu chấm
-						function formatNumber(num) {
-						return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-						}
-						
-						// Hàm lấy tổng số khách hàng
-						async function getTongKhachHang() {
-						try {
-						const data = await apiRequest(customersTableName);
-						document.getElementById('tongKhachHang').textContent = formatNumber(data.length);
-						} catch (error) {
-						document.getElementById('tongKhachHang').textContent = 'Lỗi';
-						}
-						}
-						
-						// Hàm lấy tổng số mã dự thưởng
-						async function getTongMaDuThuong() {
-						try {
-						const data = await apiRequest(usersTableName);
-						document.getElementById('tongMaDuThuong').textContent = formatNumber(data.length);
-						} catch (error) {
-						document.getElementById('tongMaDuThuong').textContent = 'Lỗi';
-						}
-						}
-						
-						
-						async function getGiaiThuongPhat() {
-						try {
-						// Thực hiện yêu cầu dữ liệu
-						const data = await apiRequest(usersTableName);
-						
-						// Lọc các dòng có `KetQuaQuay` khác rỗng
-						const filteredData = data.filter(row => row.KetQuaQuay && row.KetQuaQuay.trim() !== '');
-						
-						// Đếm số lượng dòng thỏa mãn và cập nhật vào DOM
-						document.getElementById('giaiThuongPhat').textContent = formatNumber(filteredData.length);
-						} catch (error) {
-						// Hiển thị lỗi nếu xảy ra lỗi trong quá trình xử lý
-						document.getElementById('giaiThuongPhat').textContent = 'Lỗi';
-						console.error('Lỗi khi lấy dữ liệu:', error);
-						}
-						}
-						
-						
-						// Gọi các hàm khi trang được tải
-						document.addEventListener('DOMContentLoaded', () => {
-						getTongKhachHang();
-						getTongMaDuThuong();
-						getGiaiThuongPhat();
-						});
-						
-						document.getElementById('btnQuaySo').addEventListener('click', function(e) {
-						e.preventDefault();
-						const loggedIn = localStorage.getItem('isLoggedIn');
-						
-						if (!loggedIn) {
-						window.location.href = 'Login.html';
-						} else {
-						window.location.href = 'quay_so.html';
-						}
-						});
-						</script>
-						</body>
-						</html>
-												
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container-fluid">
+            <div class="ms-auto">
+                <span class="navbar-brand">NHA KHOA THANH TRIỀU</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <img src="thanh_trieu_logo.png" alt="Logo" class="img-fluid">
+            </div>
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="khachhangtracuu.html" title="Tra cứu mã dự thưởng">
+                    <i class="fas fa-search"></i>
+                    <span>Tra cứu mã dự thưởng</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="MaSoQuayThuong.html" title="Danh sách mã dự thưởng">
+                    <i class="fas fa-list"></i>
+                    <span>Danh sách mã dự thưởng</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="danh_sach_ma_du_thuong.html" title="Danh sách mã dự thưởng NEW">
+                    <i class="fas fa-list"></i>
+                    <span>Danh sách mã dự thưởng NEW</span>
+                </a>
+            </li>
+            <li class="nav-item mt-auto">
+                <a class="nav-link" href="#" id="btnQuaySo" title="Quay số">
+                    <i class="fas fa-dice"></i>
+                    <span>Quay số</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="loading" id="loading">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card text-center p-4">
+                    <i class="fas fa-users fa-2x mb-3 text-success"></i>
+                    <h3 id="tongKhachHang">0</h3>
+                    <p>Tổng số khách hàng</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center p-4">
+                    <i class="fas fa-ticket-alt fa-2x mb-3 text-primary"></i>
+                    <h3 id="tongMaDuThuong">0</h3>
+                    <p>Tổng số mã dự thưởng</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center p-4">
+                    <i class="fas fa-gift fa-2x mb-3 text-warning"></i>
+                    <h3 id="giaiThuongPhat">0</h3>
+                    <p>Số giải thưởng đã phát</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const appId = '1aa9c9a1-1792-412c-b21a-cceeeb78c269';
+        const accessKey = 'V2-qMcxL-PdTKn-6Y26p-LyQgo-tS9t9-vxeni-RGFOK-RkLMu';
+        const region = 'www';
+        const usersTableName = 'MaSoQuayThuong';
+        const customersTableName = 'KhachHang';
+
+        async function apiRequest(tableName, selector = {}) {
+            const apiUrl = `https://${region}.appsheet.com/api/v2/apps/${appId}/tables/${tableName}/Action`;
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'ApplicationAccessKey': accessKey,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        Action: "Find",
+                        Properties: {
+                            Locale: 'vi-VN',
+                            Timezone: 'Asia/Ho_Chi_Minh'
+                        },
+                        Selector: selector
+                    })
+                });
+                if (!response.ok) {
+                    throw new Error(`Lỗi HTTP! Trạng thái: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Lỗi API:', error);
+                throw error;
+            }
+        }
+
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+
+        async function fetchData() {
+            try {
+                document.getElementById('loading').style.display = 'block';
+                const [customersData, usersData] = await Promise.all([
+                    apiRequest(customersTableName),
+                    apiRequest(usersTableName)
+                ]);
+
+                document.getElementById('tongKhachHang').textContent = formatNumber(customersData.length);
+                document.getElementById('tongMaDuThuong').textContent = formatNumber(usersData.length);
+
+                const filteredData = usersData.filter(row => row.KetQuaQuay && row.KetQuaQuay.trim() !== '');
+                document.getElementById('giaiThuongPhat').textContent = formatNumber(filteredData.length);
+            } catch (error) {
+                document.getElementById('tongKhachHang').textContent = 'Lỗi';
+                document.getElementById('tongMaDuThuong').textContent = 'Lỗi';
+                document.getElementById('giaiThuongPhat').textContent = 'Lỗi';
+                console.error('Lỗi khi lấy dữ liệu:', error);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchData();
+        });
+
+        document.getElementById('btnQuaySo').addEventListener('click', function(e) {
+            e.preventDefault();
+            const loggedIn = localStorage.getItem('isLoggedIn');
+            if (!loggedIn) {
+                window.location.href = 'Login.html';
+            } else {
+                window.location.href = 'quay_so.html';
+            }
+        });
+    </script>
+</body>
+</html>
