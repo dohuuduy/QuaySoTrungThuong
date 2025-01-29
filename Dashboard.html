@@ -285,6 +285,7 @@
                         <th>STT</th>
                         <th>Mã khách hàng</th>
                         <th>Tên khách hàng</th>
+						<th>Số điện thoại</th>
                         <th>Mã giải thưởng</th>
                         <th>Ngày cập nhật</th>
                     </tr>
@@ -363,10 +364,12 @@
                 // Kết hợp với bảng KhachHang để lấy tên khách hàng
                 const winnersList = winnersData.map((row, index) => {
                     const customer = customersData.find(c => c.MaKhachHang === row.MaKhachHang);
+					const dienthoai = customersData.find(c => c.MaKhachHang === row.MaKhachHang);
                     return {
                         STT: index + 1,
                         MaKhachHang: row.MaKhachHang,
                         HoTenKhachHang: customer ? customer.HoTenKhachHang : 'Không xác định',
+						DienThoai: customer ? customer.SoDienThoai : 'Không xác định',
                         MaGiaiThuong: row.MaGiaiThuong,
                         NgayCapNhat: row.NgayCapNhat
                     };
@@ -379,6 +382,7 @@
                         <td>${winner.STT}</td>
                         <td>${winner.MaKhachHang}</td>
                         <td>${winner.HoTenKhachHang}</td>
+						<td>${winner.DienThoai}</td>
                         <td>${winner.MaGiaiThuong}</td>
                         <td>${new Date(winner.NgayCapNhat).toLocaleDateString()}</td>
                     </tr>
