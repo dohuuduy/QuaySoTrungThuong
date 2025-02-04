@@ -403,7 +403,30 @@
 			text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 			}
 			
+						/* Nút về trang chủ */
+			.home-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 1rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #00b34d;
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+			}
 			
+			.home-button:hover {
+            background: #ffbf00;
+            transform: translateY(-20px);
+			}
 		</style>
 	</head>
 	<body>
@@ -413,14 +436,14 @@
 		<div class="container">
 			<div class="main-card">
 				<header class="header">
-					<img src="thanh_trieu_logo.png" alt="Thanh Triều" class="img-fluid mb-2" style="height: 100px">
+					<img src="thanh_trieu_logo.png" alt="Thanh Triều" class="img-fluid mb-2" style="height: 200px">
 					<h1>QUAY SỐ MAY MẮN</h1>
 				</header>
 				
 				<div class="settings-section">
 					<div class="form-check form-switch">
 						<input class="form-check-input" type="checkbox" id="toggleTable" checked>
-						<label class="form-check-label" for="toggleTable">Hiển thị danh sách mã số</label>
+						<label class="form-check-label" for="toggleTable">Hiển thị danh sách dự thưởng</label>
 					</div>
 				</div>
 				
@@ -486,7 +509,10 @@
 				</div>
 			</div>
 		</div>
-		
+		<!-- Nút home -->
+		<button class="home-button" onclick="window.location.href='Dashboard.html'" title="Về trang chủ">
+			<i class="fas fa-home"></i>
+		</button>
 		<!-- Modal Chúc Mừng -->
 		<div class="modal fade" id="modalChucMung" tabindex="-1">
 			<div class="modal-dialog modal-dialog-centered">
