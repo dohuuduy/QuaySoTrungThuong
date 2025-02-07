@@ -48,7 +48,6 @@
       }
 
       // Get Customer Details Function
-      // Get Customer Details Function
       async function getCustomerDetails(customerId) {
         try {
           const response = await apiRequest(
@@ -250,7 +249,8 @@
           const filteredResults = response.filter(function (item) {
             return (
               item.MaKhachHang &&
-              item.MaKhachHang.toLowerCase() === customerInput.toLowerCase()
+              item.MaKhachHang.toLowerCase() === customerInput.toLowerCase()&&
+              item.DaHuy === "N"
             );
           });
 
