@@ -1,4 +1,409 @@
-<tr>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - NHA KHOA THANH TRIỀU</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #008A3C;
+            --contrast-color: #ffffff;
+            --accent-color: #F8F9FA;
+            --highlight-color: #FFD700;
+        }
+
+        body {
+            background-color: var(--accent-color);
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .sidebar {
+            background-color: var(--primary-color);
+            width: 70px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            padding: 1rem 0;
+            z-index: 1050;
+            transition: width 0.3s ease;
+            overflow: hidden;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar:hover {
+            width: 250px;
+        }
+
+        .sidebar:hover + .main-content {
+            margin-left: 250px;
+        }
+
+        .sidebar:hover + .navbar {
+            width: calc(100% - 250px);
+            left: 250px;
+        }
+
+        .main-content {
+            margin-left: 70px;
+            padding: 20px;
+            padding-top: 60px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .sidebar-header img {
+            max-width: 30px;
+            max-height: 30px;
+            object-fit: contain;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem 0;
+        }
+
+        .sidebar-header .logo-container {
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .nav-link {
+            color: var(--contrast-color);
+            padding: 0.8rem 1rem;
+            margin: 0.2rem 0;
+            white-space: nowrap;
+            position: relative;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--highlight-color);
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+            margin-right: 1rem;
+        }
+
+        .nav-link span {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar:hover .nav-link span {
+            opacity: 1;
+        }
+
+        .navbar {
+            position: relative;
+            width: 100%;
+            background-color: var(--contrast-color);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 15px;
+            background-color: var(--contrast-color);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Cải thiện responsive cho bảng */
+        .winners-table {
+            margin-top: 2rem;
+            background-color: var(--contrast-color);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .winners-table h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            padding: 0 15px;
+        }
+
+        .winners-table table {
+            width: 100%;
+            min-width: 800px;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .winners-table th, .winners-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            white-space: nowrap;
+        }
+
+        .winners-table th {
+            background-color: var(--primary-color);
+            color: var(--contrast-color);
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        .winners-table tr:hover {
+            background-color: rgba(0, 138, 60, 0.1);
+        }
+
+        /* Media queries cho mobile */
+        @media screen and (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+                margin-left: 70px;
+            }
+
+            .card {
+                margin-bottom: 1rem;
+                padding: 1rem !important;
+            }
+
+            .card h3 {
+                font-size: 1.5rem;
+            }
+
+            .card p {
+                font-size: 0.9rem;
+            }
+
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+
+            .winners-table {
+			margin: 1rem -15px;
+                border-radius: 0;
+                padding: 0.5rem;
+            }
+
+            .winners-table::before {
+                content: '← Vuốt ngang để xem thêm →';
+                position: absolute;
+                top: -25px;
+                left: 0;
+                width: 100%;
+                text-align: center;
+                font-size: 0.8rem;
+                color: #666;
+            }
+
+            .row {
+                margin-right: -10px;
+                margin-left: -10px;
+            }
+
+            .col-md-4 {
+                padding-right: 10px;
+                padding-left: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container-fluid">
+            <div class="ms-auto">
+                <span class="navbar-brand">NHA KHOA THANH TRIỀU</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <img src="thanh_trieu_logo.png" alt="Logo" class="img-fluid">
+            </div>
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="khachhangtracuu.html" title="Tra cứu mã dự thưởng">
+                    <i class="fas fa-search"></i>
+                    <span>Tra cứu mã dự thưởng</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="danh_sach_ma_du_thuong.html" title="Danh sách mã dự thưởng NEW">
+                    <i class="fas fa-list"></i>
+                    <span>Ds Mã dự thưởng</span>
+                </a>
+            </li>
+            <li class="nav-item mt-auto">
+                <a class="nav-link" href="#" id="btnQuaySo" title="Quay số">
+                    <i class="fas fa-dice"></i>
+                    <span>Quay số</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="loading" id="loading">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Đang tải...</span>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card text-center p-4">
+                    <i class="fas fa-users"></i>
+                    <h3 id="tongKhachHang">0</h3>
+                    <p>Tổng số khách hàng</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center p-4">
+                    <i class="fas fa-ticket-alt"></i>
+                    <h3 id="tongMaDuThuong">0</h3>
+                    <p>Tổng số mã dự thưởng</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center p-4">
+                    <i class="fas fa-gift"></i>
+                    <h3 id="giaiThuongPhat">0</h3>
+                    <p>Số giải thưởng đã phát</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="winners-table">
+            <h3 id="winnersTitle">Danh sách người trúng thưởng của năm ...</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã khách hàng</th>
+                        <th>Tên khách hàng</th>
+                        <th>Số điện thoại</th>
+                        <th>Mã giải thưởng</th>
+                        <th>Ngày cập nhật</th>
+                    </tr>
+                </thead>
+                <tbody id="winnersList">
+                    <!-- Dữ liệu người trúng thưởng sẽ được thêm vào đây -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const appId = '1aa9c9a1-1792-412c-b21a-cceeeb78c269';
+        const accessKey = 'V2-qMcxL-PdTKn-6Y26p-LyQgo-tS9t9-vxeni-RGFOK-RkLMu';
+        const region = 'www';
+        const usersTableName = 'MaSoQuayThuong';
+        const customersTableName = 'KhachHang';
+
+        async function apiRequest(tableName, selector = {}) {
+            const apiUrl = `https://${region}.appsheet.com/api/v2/apps/${appId}/tables/${tableName}/Action`;
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'ApplicationAccessKey': accessKey,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        Action: "Find",
+                        Properties: {
+                            Locale: 'vi-VN',
+                            Timezone: 'Asia/Ho_Chi_Minh'
+                        },
+                        Selector: selector
+                    })
+                });
+                if (!response.ok) {
+                    throw new Error(`Lỗi HTTP! Trạng thái: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Lỗi API:', error);
+                throw error;
+            }
+        }
+
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+
+        async function fetchData() {
+            try {
+                document.getElementById('loading').style.display = 'block';
+                const [customersData, usersData] = await Promise.all([
+                    apiRequest(customersTableName),
+                    apiRequest(usersTableName)
+                ]);
+
+                document.getElementById('tongKhachHang').textContent = formatNumber(customersData.length);
+                document.getElementById('tongMaDuThuong').textContent = formatNumber(usersData.length);
+
+                const filteredData = usersData.filter(row => row.KetQuaQuay && row.KetQuaQuay.trim() !== '');
+                document.getElementById('giaiThuongPhat').textContent = formatNumber(filteredData.length);
+
+                const currentYear = new Date().getFullYear();
+                const winnersData = filteredData.filter(row => {
+                    const rowDate = new Date(row.NgayCapNhat);
+                    return rowDate.getFullYear() === currentYear;
+                });
+
+                document.getElementById('winnersTitle').textContent = `Danh sách người trúng thưởng của năm ${currentYear}`;
+
+                const winnersList = winnersData.map((row, index) => {
+                    const customer = customersData.find(c => c.MaKhachHang === row.MaKhachHang);
+                    return {
+                        STT: index + 1,
+                        MaKhachHang: row.MaKhachHang,
+                        HoTenKhachHang: customer ? customer.HoTenKhachHang : 'Không xác định',
+                        DienThoai: customer ? customer.SoDienThoai : 'Không xác định',
+                        MaGiaiThuong: row.MaGiaiThuong,
+                        NgayCapNhat: row.NgayCapNhat
+                    };
+                });
+
+                const winnersListElement = document.getElementById('winnersList');
+                winnersListElement.innerHTML = winnersList.map(winner => `
+                    <tr>
                         <td>${winner.STT}</td>
                         <td>${winner.MaKhachHang}</td>
                         <td>${winner.HoTenKhachHang}</td>
