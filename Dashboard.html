@@ -7,9 +7,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-	
-	
-	
     <style>
         :root {
             --primary-color: #008A3C;
@@ -42,19 +39,10 @@
             width: 250px;
         }
 
-        .sidebar:hover + .main-content {
-            margin-left: 250px;
-        }
-
-        .sidebar:hover + .navbar {
-            width: calc(100% - 250px);
-            left: 250px;
-        }
-
         .main-content {
             margin-left: 70px;
             padding: 20px;
-            padding-top: 60px; /* Giảm khoảng cách giữa card và navbar */
+            padding-top: 60px;
             transition: margin-left 0.3s ease;
         }
 
@@ -64,10 +52,6 @@
             object-fit: contain;
             border-radius: 50%;
             transition: transform 0.3s ease;
-        }
-
-        .sidebar-header img:hover {
-            transform: scale(1.1);
         }
 
         .sidebar-header {
@@ -118,11 +102,18 @@
         }
 
         .navbar {
-            position: relative;
-            width: 100%;
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 70px;
             background-color: var(--contrast-color);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             z-index: 1000;
+            transition: left 0.3s ease;
+        }
+
+        .sidebar:hover + .navbar {
+            left: 250px;
         }
 
         .navbar-brand {
@@ -137,6 +128,7 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             border-radius: 15px;
             background-color: var(--contrast-color);
+            height: 100%;
         }
 
         .card:hover {
@@ -154,57 +146,138 @@
             font-size: 2rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
+            color: var(--primary-color);
         }
 
         .card p {
             font-size: 1rem;
             color: #666;
+            margin-bottom: 0;
         }
 
         .loading {
             display: none;
-            text-align: center;
-            margin-top: 20px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2000;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 2rem;
+            border-radius: 10px;
         }
 
-        .spinner-border {
-            width: 3rem;
-            height: 3rem;
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
         }
 
         .winners-table {
-            margin-top: 2rem;
-            background-color: var(--contrast-color);
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            padding: 1rem;
-        }
-
-        .winners-table h3 {
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-        }
-
-        .winners-table table {
             width: 100%;
-            border-collapse: collapse;
+            min-width: 800px;
+            margin: 0;
+            border-collapse: separate;
+            border-spacing: 0;
         }
 
-        .winners-table th, .winners-table td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+        .winners-table thead {
+            background-color: var(--primary-color);
+            color: white;
         }
 
         .winners-table th {
-            background-color: var(--primary-color);
-            color: var(--contrast-color);
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            padding: 15px;
+            font-weight: 500;
+            text-align: left;
+            border: none;
         }
 
-        .winners-table tr:hover {
+        .winners-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .winners-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .winners-table tbody tr:hover {
             background-color: rgba(0, 138, 60, 0.1);
         }
-    </style>
+
+        .table-title {
+            padding: 15px;
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        @media screen and (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+                padding-top: 70px;
+            }
+
+            .card {
+                margin-bottom: 1rem;
+                padding: 1rem !important;
+            }
+
+            .card h3 {
+                font-size: 1.5rem;
+            }
+
+            .card p {
+                font-size: 0.9rem;
+            }
+
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+
+            .table-container {
+                margin: 1rem -15px;
+                border-radius: 0;
+            }
+
+            .table-container::before {
+                content: '← Vuốt ngang để xem thêm →';
+                position: absolute;
+                top: -25px;
+                left: 0;
+                width: 100%;
+                text-align: center;
+                font-size: 0.8rem;
+                color: #666;
+                padding: 5px;
+            }
+
+            .winners-table th,
+            .winners-table td {
+                white-space: nowrap;
+            }
+
+            .row {
+                margin-right: -10px;
+                margin-left: -10px;
+            }
+
+            .col-md-4 {
+                padding-right: 10px;
+                padding-left: 10px;
+            }
+        }
+		</style>
 </head>
 <body>
     <nav class="navbar">
@@ -228,14 +301,8 @@
                     <span>Tra cứu mã dự thưởng</span>
                 </a>
             </li>
-     <!--       <li class="nav-item">
-                <a class="nav-link" href="MaSoQuayThuong.html" title="Danh sách mã dự thưởng">
-                    <i class="fas fa-list"></i>
-                    <span>Danh sách mã dự thưởng</span>
-                </a>
-            </li>-->
             <li class="nav-item">
-                <a class="nav-link" href="danh_sach_ma_du_thuong.html" title="Danh sách mã dự thưởng NEW">
+                <a class="nav-link" href="danh_sach_ma_du_thuong.html" title="Danh sách mã dự thưởng">
                     <i class="fas fa-list"></i>
                     <span>Ds Mã dự thưởng</span>
                 </a>
@@ -252,9 +319,10 @@
     <div class="main-content">
         <div class="loading" id="loading">
             <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+                <span class="visually-hidden">Đang tải...</span>
             </div>
         </div>
+
         <div class="row g-4">
             <div class="col-md-4">
                 <div class="card text-center p-4">
@@ -279,29 +347,28 @@
             </div>
         </div>
 
-        <!-- Phần hiển thị danh sách người trúng thưởng -->
-        <div class="winners-table">
-            <h3 id="winnersTitle">Danh sách người trúng thưởng của năm ...</h3>
-            <table>
+        <div class="table-container">
+            <h3 class="table-title" id="winnersTitle">Danh sách người trúng thưởng của năm ...</h3>
+            <table class="winners-table">
                 <thead>
                     <tr>
                         <th>STT</th>
                         <th>Mã khách hàng</th>
                         <th>Tên khách hàng</th>
-						<th>Số điện thoại</th>
+                        <th>Số điện thoại</th>
                         <th>Mã giải thưởng</th>
                         <th>Ngày cập nhật</th>
                     </tr>
                 </thead>
                 <tbody id="winnersList">
-                    <!-- Dữ liệu người trúng thưởng sẽ được thêm vào đây -->
+                    <!-- Dữ liệu sẽ được thêm vào đây bằng JavaScript -->
                 </tbody>
             </table>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
+     <script>
         const appId = '1aa9c9a1-1792-412c-b21a-cceeeb78c269';
         const accessKey = 'V2-qMcxL-PdTKn-6Y26p-LyQgo-tS9t9-vxeni-RGFOK-RkLMu';
         const region = 'www';
