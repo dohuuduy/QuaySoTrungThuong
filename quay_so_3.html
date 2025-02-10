@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="vi">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Quay Số May Mắn</title>
+		<link rel="icon" type="image/jpg" href="thanh_trieu_logo.jpeg">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+		<style>
+			:root {
+				--toyota-green: #008a3c;
+				--toyota-dark-green: #006c2e;
+			}
+
+			body {
+				background: linear-gradient(135deg, #008a3c 0%, #005824 100%);
+				min-height: 100vh;
+			}
+
+			.container {
+				max-width: 1200px;
+				padding: 2rem;
+			}
+
+			.main-card {
+				background: white;
+				border-radius: 15px;
+				box-shadow: 0 0 0 3px rgba(0, 138, 60, 0.5);
+				padding: 2rem;
+				margin-top: 1rem;
+			}
+
+			.header {
+				text-align: center;
+				margin-bottom: 1rem;
+				position: relative;
+				padding: 1rem 0;
+			}
+
+			.header h1 {
+				color: var(--toyota-green);
+				font-size: 2.5rem;
+				margin-bottom: 0.2rem;
+			}
+
+			.header::after {
+				content: "";
+				position: absolute;
+				bottom: 0;
+				left: 50%;
+				transform: translateX(-50%);
+				width: 200px;
+				height: 3px;
+				background: linear-gradient(90deg, var(--toyota-green), #00bf54);
+				border-radius: 2px;
+			}
+
+			.filter-section {
+				background: #f8f9fa;
+				padding: 1rem;
+				border-radius: 10px;
+				margin-bottom: 1rem;
+			}
+
+			.settings-section {
+				position: absolute;
+				top: 1rem;
+				right: 1rem;
+				z-index: 10;
+			}
+
+			.form-check {
+				margin: 0;
+				padding: 0;
+			}
+
+			.form-check-input {
+				width: 2.5rem;
+				height: 1.25rem;
+				cursor: pointer;
+			}
+
+			.form-check-label {
+				display: none;
+			}
+
+			.form-check-input::after {
+				content: "Danh sách mã số";
+				position: absolute;
+				background: rgba(0, 0, 0, 0.8);
+				color: white;
+				padding: 0.5rem;
+				border-radius: 4px;
+				font-size: 0.875rem;
+				visibility: hidden;
+				opacity: 0;
+				transition: 0.3s;
+				white-space: nowrap;
+				top: 100%;
+				right: 0;
+			}
+
+			.form-check-input:hover::after {
+				visibility: visible;
+				opacity: 1;
+			}
+
+			.stats {
+				color: var(--toyota-green);
+				font-weight: 600;
+				margin-left: 1rem;
+				white-space: nowrap;
+			}
+
+			.result-section {
+				text-align: center;
+				background: linear-gradient(135deg, var(--toyota-green), var(--toyota-dark-green));
+				padding: 2rem;
+				border-radius: 15px;
+				color: white;
+				margin-bottom: 2rem;
+			}
+
+			.message {
+				font-size: 1.5rem;
+				color: #ffd700;
+				margin: 1rem 0;
+			}
+
+			/* New spinning number styles */
+
+			
+			 .spinning-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+            padding: 1.5rem 3rem;
+            border-radius: 12px;
+            min-width: 300px;
+        }
+
+			.spinning-number.spinning {
+				animation: numberSpin 0.1s linear infinite;
+			}
+
+			@keyframes numberSpin {
+				0% { transform: translateY(-2px); }
+				50% { transform: translateY(2px); }
+				100% { transform: translateY(-2px); }
+			}
+
+        .number-digit {
+            display: inline-block;
+            background: #006c2e;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin: 0 2px;
+            color: #ffffff;
+            min-width: 1.2em;
+            text-align: center;
+        }
+
+			.result-display {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 1rem;
+				background: rgba(255, 255, 255, 0.1);
+				border-radius: 10px;
+				padding: 1.5rem;
+				margin: 1.5rem 0;
+			}
+
+			.prize-code {
+				order: -1;
+				font-size: 2.5rem;
+				margin-bottom: 1rem;
+				color: #ffd700;
+				font-weight: bold;
+				text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+			}
+
+			.draw-button {
+				padding: 1rem 2rem;
+				font-size: 1.2rem;
+				background: #ffd700;
+				color: var(--toyota-green);
+				border: none;
+				border-radius: 8px;
+				cursor: pointer;
+				transition: all 0.3s ease;
+				font-weight: bold;
+			}
+
+			.draw-button:hover:not(:disabled) {
+				transform: translateY(-2px);
+				box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+			}
+
+			.table {
+				border-radius: 10px;
+				overflow: hidden;
+			}
+
+			.table th {
+				text-align: center;
+				background: var(--toyota-green);
+				color: white;
+				font-weight: 600;
+				padding: 1rem;
+			}
+
+			.table td {
+				vertical-align: middle;
+				padding: 0.75rem;
+			}
+
+			.modal-content {
+				background: linear-gradient(135deg, var(--toyota-green), var(--toyota-dark-green));
+				color: white;
+				border-radius: 20px;
+			}
+
+			.modal-header {
+				border-bottom: none;
+			}
+
+			.modal-body {
+				padding: 2rem;
+			}
+
+			.winner-name {
+				font-size: 2rem;
+				color: #ffd700;
+				font-weight: bold;
+				text-align: center;
+				margin: 1.5rem 0;
+			}
+
+			.prize-number {
+				font-size: 3rem;
+				color: #ffd900;
+				font-weight: bold;
+				text-align: center;
+				margin: 2rem 0;
+				padding: 1.5rem;
+				background: rgba(255, 255, 255, 0.1);
+				border-radius: 15px;
+			}
+
+			.winner-info {
+				text-align: left;
+				background: rgba(255, 255, 255, 0.1);
+				padding: 1.2rem;
+				border-radius: 10px;
+				margin: 1rem auto;
+				max-width: 400px;
+			}
+
+			.winner-info div {
+				font-size: 1.1rem;
+				line-height: 1.5;
+				margin-bottom: 0.8rem;
+			}
+
+			.winner-info div:last-child {
+				margin-bottom: 0;
+			}
+
+			.winner-info i {
+				width: 20px;
+				color: #ffd700;
+				margin-right: 10px;
+			}
+
+			.home-button {
+				position: fixed;
+				bottom: 2rem;
+				right: 1rem;
+				width: 60px;
+				height: 60px;
+				border-radius: 50%;
+				background: #00b34d;
+				color: white;
+				border: none;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+				z-index: 1000;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 24px;
+				transition: all 0.3s ease;
+			}
+
+			.home-button:hover {
+				background: #ffbf00;
+				transform: translateY(-20px);
+			}
+
+			@media (max-width: 768px) {
+				.container {
+					padding: 1rem;
+				}
+
+				.header h1 {
+					font-size: 1.8rem;
+				}
+
+				.spinning-number {
+					font-size: 2.5rem;
+					padding: 1rem 2rem;
+					min-width: auto;
+				}
+
+				.prize-code {
+					font-size: 2rem;
+				}
+
+				.winner-name {
+					font-size: 1.5rem;
+				}
+
+				.prize-number {
+					font-size: 2rem;
+				}
+
+				.winner-info {
+					font-size: 0.9rem;
+				}
+
+				.filter-section .col-md-4 {
+					text-align: left;
+					margin-bottom: 0.5rem;
+				}
+
+				.filter-section .col-md-8 {
+					flex-direction: column;
+					gap: 0.5rem;
+				}
+
+				#locGiaiThuong {
+					max-width: 100%;
+				}
+
+				.stats {
+					margin-left: 0;
+				}
+
+				.result-display {
+					flex-direction: column;
+					padding: 1rem;
+				}
+
+				.settings-section {
+					top: 0.5rem;
+					right: 0.5rem;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<audio id="amThanhQuaySo" src="quay_so.mp3" preload="auto"></audio>
+		<audio id="amThanhChucMung" src="chuc_mung.mp3" preload="auto"></audio>
+
+		<div class="container">
+			<div class="main-card">
+				<header class="header">
+					<img src="thanh_trieu_logo.png" alt="Thanh Triều" class="img-fluid mb-2" style="height: 200px">
+					<h1>QUAY SỐ MAY MẮN</h1>
+				</header>
+
+				<div class="settings-section">
+					<div class="form-check form-switch">
+						<input class="form-check-input" type="checkbox" id="toggleTable" checked>
+						<label class="form-check-label" for="toggleTable">Hiển thị danh sách dự thưởng</label>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-12">
+						<div class="filter-section">
+							<div class="row align-items-center">
+								<div class="col-md-4">
+									<label class="form-label fw-bold text-success">Chọn giải thưởng:</label>
+								</div>
+								<div class="col-md-8">
+									<select id="locGiaiThuong" class="form-select" onchange="locVaHienThiDuLieu()">
+										<option value="">Tất cả giải thưởng</option>
+										<option value="db">Giải Đặc Biệt</option>
+										<option value="G1">Giải Nhất</option>
+										<option value="G2">Giải Nhì</option>
+										<option value="G3">Giải Ba</option>
+										<option value="kk">Giải Khuyến Khích</option>
+									</select>
+									<div class="stats" id="thongKeMaSo"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="result-section">
+					<h2 class="result-title">Kết Quả Quay Thưởng</h2>
+					<div id="defaultMessage" class="message">Vui lòng chọn giải thưởng để quay số</div>
+					<div class="result-display" style="display: none;">
+						<div class="prize-code" id="prizeCode"></div>
+						<div class="number-container">
+							<div id="drawNumber" class="spinning-number">
+								<span class="number-digit">0</span>
+								<span class="number-digit">0</span>
+								<span class="number-digit">0</span>
+								<span class="number-digit">0</span>
+								<span class="number-digit">0</span>
+							</div>
+						</div>
+					</div>
+					<button id="nutQuay" class="draw-button" onclick="batDauQuay()" disabled>
+						<i class="fas fa-gift"></i> Bắt đầu quay
+					</button>
+				</div>
+
+				<div id="dangTai" class="text-center text-success py-4">
+					<div class="spinner-border" role="status">
+						<span class="visually-hidden">Đang tải...</span>
+					</div>
+					<div class="mt-2">Đang tải dữ liệu...</div>
+				</div>
+
+				<div id="tableSection" class="table-responsive">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>Mã Giải Thưởng</th>
+								<th>Số Quay Thưởng</th>
+								<th>Khách Hàng</th>
+								<th>Ngày Cấp</th>
+								<th>Giải Thưởng</th>
+								<th>Kết Quả</th>
+							</tr>
+						</thead>
+						<tbody id="danhSachSo"></tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+		<button class="home-button" onclick="window.location.href='Dashboard.html'" title="Về trang chủ">
+			<i class="fas fa-home"></i>
+		</button>
+
+		<!-- Modal Chúc Mừng -->
+		<div class="modal fade" id="modalChucMung" tabindex="-1">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header border-0">
+						<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+					</div>
+					<div class="modal-body text-center">
+						<i class="fas fa-trophy" style="font-size: 3rem; color: #ffd700"></i>
+						<h3 class="mt-3 mb-4">Chúc Mừng Khách Hàng</h3>
+						<div class="winner-name" id="tenNguoiTrung"></div>
+						<div class="prize-number" id="soTrungThuong"></div>
+						<div class="winner-info" id="thongTinNguoiTrung"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+		<script>
+			const cauHinh = {
+				appId: "1aa9c9a1-1792-412c-b21a-cceeeb78c269",
+				accessKey: "V2-qMcxL-PdTKn-6Y26p-LyQgo-tS9t9-vxeni-RGFOK-RkLMu",
+				region: "www",
+				tableName: "MaSoQuayThuong"
+			};
+
+			let tatCaMaSo = [];
+			let maSoDaLoc = [];
+			let dangQuay = false;
+			let khoangThoiGianQuay;
+			const danhSachKhachHang = {};
+			const modalChucMung = new bootstrap.Modal(document.getElementById("modalChucMung"));
+
+			function updateSpinningNumber(number) {
+				const drawNumber = document.getElementById('drawNumber');
+				const digits = drawNumber.getElementsByClassName('number-digit');
+				const numStr = number.toString().padStart(5, '0');
+
+				for (let i = 0; i < digits.length; i++) {
+					digits[i].textContent = numStr[i];
+				}
+			}
+
+					// Xử lý ẩn/hiện bảng
+			document.getElementById('toggleTable').addEventListener('change', function(e) {
+				document.getElementById('tableSection').style.display = e.target.checked ? 'block' : 'none';
+			});
+
+			document.getElementById("locGiaiThuong").addEventListener("change", function() {
+				const giaiDaChon = this.value;
+				const defaultMessage = document.getElementById("defaultMessage");
+				const resultDisplay = document.querySelector(".result-display");
+				const prizeCode = document.getElementById("prizeCode");
+				const nutQuay = document.getElementById("nutQuay");
+
+				if (giaiDaChon) {
+					defaultMessage.style.display = "none";
+					resultDisplay.style.display = "flex";
+					prizeCode.textContent = "25" + giaiDaChon;
+					nutQuay.disabled = false;
+				} else {
+					defaultMessage.style.display = "block";
+					resultDisplay.style.display = "none";
+					nutQuay.disabled = true;
+				}
+			});
+
+			async function goiAPI(hanhDong, hangDuLieu) {
+				const urlAPI = `https://${cauHinh.region}.appsheet.com/api/v2/apps/${cauHinh.appId}/tables/${cauHinh.tableName}/Action`;
+				const thongTinGoi = {
+					Action: hanhDong,
+					Properties: {
+						Locale: "vi-VN",
+						Timezone: "Asia/Ho_Chi_Minh"
+					},
+					Rows: hangDuLieu
+				};
+
+				try {
+					const phanHoi = await fetch(urlAPI, {
+						method: "POST",
+						headers: {
+							ApplicationAccessKey: cauHinh.accessKey,
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify(thongTinGoi)
+					});
+
+					if (!phanHoi.ok) throw new Error(`HTTP error! status: ${phanHoi.status}`);
+					return await phanHoi.json();
+				} catch (loi) {
+					console.error("Lỗi gọi API:", loi);
+					throw loi;
+				}
+			}
+
+			async function layThongTinKhachHang(maKhachHang) {
+				try {
+					const phanHoi = await fetch(`https://${cauHinh.region}.appsheet.com/api/v2/apps/${cauHinh.appId}/tables/KhachHang/Action`, {
+						method: "POST",
+						headers: {
+							ApplicationAccessKey: cauHinh.accessKey,
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({
+							Action: "Find",
+							Properties: {
+								Locale: "vi-VN",
+								Timezone: "Asia/Ho_Chi_Minh"
+							},
+							Selector: {
+								MaKhachHang: maKhachHang
+							}
+						})
+					});
+
+					if (!phanHoi.ok) throw new Error(`HTTP error! status: ${phanHoi.status}`);
+
+					const duLieu = await phanHoi.json();
+					return Array.isArray(duLieu) ? duLieu[0] : duLieu.Rows ? duLieu.Rows[0] : null;
+				} catch (loi) {
+					console.error("Lỗi khi lấy thông tin khách hàng:", loi);
+					return null;
+				}
+			}
+
+			function locVaHienThiDuLieu() {
+				const giaiThuongDaChon = document.getElementById("locGiaiThuong").value;
+
+				maSoDaLoc = tatCaMaSo.filter((item) => {
+					const giaTri = item.Values || item;
+					return (!giaiThuongDaChon || giaTri.MaGiaiThuong === giaiThuongDaChon) && !giaTri.KetQuaQuay;
+				});
+
+				const tongSoMaTheoGiai = tatCaMaSo.filter((item) => {
+					const giaTri = item.Values || item;
+					return !giaiThuongDaChon || giaTri.MaGiaiThuong === giaiThuongDaChon;
+				}).length;
+
+				const thongKe = document.getElementById("thongKeMaSo");
+				thongKe.textContent = `Còn lại: ${maSoDaLoc.length}/${tongSoMaTheoGiai} mã số`;
+
+				hienThiDuLieu(maSoDaLoc);
+
+				const nutQuay = document.getElementById("nutQuay");
+				nutQuay.disabled = maSoDaLoc.length === 0;
+			}
+
+			async function layDuLieu() {
+				try {
+					document.getElementById("dangTai").style.display = "block";
+					document.getElementById("nutQuay").disabled = true;
+
+					const duLieu = await goiAPI("Find");
+					tatCaMaSo = Array.isArray(duLieu) ? duLieu : duLieu.Rows || [];
+					locVaHienThiDuLieu();
+				} catch (loi) {
+					console.error("Lỗi khi tải dữ liệu:", loi);
+					alert("Không thể tải dữ liệu. Vui lòng thử lại sau.");
+				} finally {
+					document.getElementById("dangTai").style.display = "none";
+				}
+			}
+
+			async function hienThiDuLieu(duLieu) {
+				const tbody = document.getElementById("danhSachSo");
+				tbody.innerHTML = "";
+
+				for (const item of duLieu) {
+					const giaTri = item.Values || item;
+					const [maGiai, soQuayThuong] = giaTri.idMaSoQuayThuong.split('-');
+
+					if (!danhSachKhachHang[giaTri.MaKhachHang]) {
+						const thongTinKH = await layThongTinKhachHang(giaTri.MaKhachHang);
+						if (thongTinKH) {
+							danhSachKhachHang[giaTri.MaKhachHang] = thongTinKH;
+						}
+					}
+
+					const thongTinKH = danhSachKhachHang[giaTri.MaKhachHang] || {};
+					const tenKhachHang = thongTinKH.HoTenKhachHang || "Chưa xác định";
+
+					const hang = document.createElement("tr");
+					const trangThaiClass = giaTri.KetQuaQuay ? "table-success" : "";
+					hang.className = trangThaiClass;
+
+					hang.innerHTML = `
+						<td class="text-center">${maGiai}</td>
+						<td class="text-center">${soQuayThuong}</td>
+						<td>${tenKhachHang} (${giaTri.MaKhachHang})</td>
+						<td class="text-center">${dinhDangNgay(giaTri.NgayCap) || ""}</td>
+						<td class="text-center">${layTenGiai(giaTri.MaGiaiThuong) || ""}</td>
+						<td class="text-center">${giaTri.KetQuaQuay
+							? `<span class="badge bg-success">${layTenGiai(giaTri.KetQuaQuay)}</span>`
+							: '<span class="badge bg-secondary">Chưa quay</span>'
+						}</td>
+					`;
+					tbody.appendChild(hang);
+				}
+			}
+
+			function dinhDangNgay(chuoiNgay) {
+				if (!chuoiNgay) return "";
+				const ngay = new Date(chuoiNgay);
+				return ngay.toLocaleDateString("vi-VN", {
+					day: "2-digit",
+					month: "2-digit",
+					year: "numeric",
+					hour: "2-digit",
+					minute: "2-digit"
+				});
+			}
+
+			function layTenGiai(maGiai) {
+				const danhSachGiai = {
+					db: "Giải Đặc Biệt",
+					G1: "Giải Nhất",
+					G2: "Giải Nhì",
+					G3: "Giải Ba",
+					kk: "Giải Khuyến Khích"
+				};
+				return danhSachGiai[maGiai] || maGiai;
+			}
+
+        async function batDauQuay() {
+            if (dangQuay || maSoDaLoc.length === 0) return;
+
+            const phanMaGiai = document.getElementById("prizeCode");
+            const nutQuay = document.getElementById("nutQuay");
+            const drawNumber = document.getElementById("drawNumber");
+            const giaiDaChon = document.getElementById("locGiaiThuong").value;
+            const amThanhQuay = document.getElementById("amThanhQuaySo");
+
+            if (!giaiDaChon) {
+                alert("Vui lòng chọn giải thưởng trước khi quay!");
+                return;
+            }
+
+            dangQuay = true;
+            nutQuay.disabled = true;
+            amThanhQuay.currentTime = 0;
+            amThanhQuay.play();
+
+            const thoiGianQuay = 3000;
+            const tocDoCapNhat = 50;
+            let thoiGianDaQua = 0;
+
+            khoangThoiGianQuay = setInterval(() => {
+                const chiSoNgauNhien = Math.floor(Math.random() * maSoDaLoc.length);
+                const phanTuNgauNhien = maSoDaLoc[chiSoNgauNhien];
+                const [maGiai, soQuayThuong] = (phanTuNgauNhien.Values?.idMaSoQuayThuong || phanTuNgauNhien.idMaSoQuayThuong).split('-');
+
+                phanMaGiai.textContent = maGiai;
+
+                const randomNum = Math.floor(Math.random() * 100000);
+                updateSpinningNumber(randomNum);
+
+                thoiGianDaQua += tocDoCapNhat;
+                if (thoiGianDaQua >= thoiGianQuay) {
+                    clearInterval(khoangThoiGianQuay);
+                    updateSpinningNumber(parseInt(soQuayThuong));
+                    ketThucQuay(phanTuNgauNhien, giaiDaChon);
+                }
+            }, tocDoCapNhat);
+        }
+
+			async function ketThucQuay(nguoiTrungGiai, giaiDaChon) {
+				const thongTinTrungGiai = nguoiTrungGiai.Values || nguoiTrungGiai;
+				const amThanhQuay = document.getElementById("amThanhQuaySo");
+				const amThanhChucMung = document.getElementById("amThanhChucMung");
+
+				amThanhQuay.pause();
+				amThanhQuay.currentTime = 0;
+
+				try {
+					const now = new Date();
+					const gmt7Time = new Date(now.getTime() + (7 * 60 * 60 * 1000));
+					const ngayCapNhat = gmt7Time.toISOString();
+
+					await goiAPI("Edit", [{
+						idMaSoQuayThuong: thongTinTrungGiai.idMaSoQuayThuong,
+						KetQuaQuay: giaiDaChon,
+						NgayCapNhat: ngayCapNhat,
+						TinhTrangQuay: "Y"
+					}]);
+
+					const thongTinKhachHang = await layThongTinKhachHang(thongTinTrungGiai.MaKhachHang);
+					amThanhChucMung.play();
+					hienThiChucMung(nguoiTrungGiai, thongTinKhachHang);
+
+					await layDuLieu();
+				} catch (loi) {
+					console.error("Lỗi khi cập nhật kết quả:", loi);
+					alert("Có lỗi xảy ra khi cập nhật kết quả quay thưởng!");
+				} finally {
+					dangQuay = false;
+					document.getElementById("nutQuay").disabled = false;
+				}
+			}
+
+			function maskPhoneNumber(phone) {
+				if (!phone) return "Không xác định";
+				return phone.slice(0, 4) + "***" + phone.slice(7);
+			}
+
+			function hienThiChucMung(duLieuNguoiTrung, thongTinKhachHang) {
+				const giaTri = duLieuNguoiTrung.Values || duLieuNguoiTrung;
+				const tenKhachHang = thongTinKhachHang?.HoTenKhachHang || "Không xác định";
+				const [maGiai, soQuayThuong] = giaTri.idMaSoQuayThuong.split('-');
+
+				document.getElementById("tenNguoiTrung").textContent = tenKhachHang;
+				document.getElementById("soTrungThuong").innerHTML = `${maGiai}-${soQuayThuong}`;
+				document.getElementById("thongTinNguoiTrung").innerHTML = `
+					<div class="mb-2"><i class="fas fa-user"></i> Mã KH: ${giaTri.MaKhachHang}</div>
+					<div class="mb-2"><i class="fas fa-phone"></i> SĐT: ${maskPhoneNumber(thongTinKhachHang?.SoDienThoai)}</div>
+					<div><i class="fas fa-map-marker-alt"></i> Địa chỉ: ${thongTinKhachHang?.DiaChi || "Không xác định"}</div>
+					<div class="mb-2"><i class="fas fa-trophy"></i> Giải thưởng: ${layTenGiai(giaTri.MaGiaiThuong)}</div>
+				`;
+
+				modalChucMung.show();
+			}
+
+			document.addEventListener("DOMContentLoaded", layDuLieu);
+		</script>
+	</body>
+</html>
