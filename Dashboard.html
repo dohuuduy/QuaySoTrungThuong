@@ -478,15 +478,11 @@ async function fetchData() {
 				fetchData();
 			});
 			
-			document.getElementById('btnQuaySo').addEventListener('click', function(e) {
-				e.preventDefault();
-				const loggedIn = localStorage.getItem('isLoggedIn');
-				if (!loggedIn) {
-					window.location.href = 'Login.html';
-					} else {
-					window.location.href = 'quay_so_3.html';
-				}
-			});
+document.getElementById('btnQuaySo').addEventListener('click', function(e) {
+    e.preventDefault();
+    // Luôn chuyển hướng đến trang đăng nhập
+    window.location.href = 'Login.html';
+});
 		</script>
 	</body>
 </html>
