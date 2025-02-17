@@ -519,34 +519,55 @@
 				}
 			});
 
-			async function goiAPI(hanhDong, hangDuLieu) {
-				const urlAPI = `https://${cauHinh.region}.appsheet.com/api/v2/apps/${cauHinh.appId}/tables/${cauHinh.tableName}/Action`;
-				const thongTinGoi = {
-					Action: hanhDong,
-					Properties: {
-						Locale: "vi-VN",
-						Timezone: "Asia/Ho_Chi_Minh"
-					},
-					Rows: hangDuLieu
-				};
+async function goiAPI(hanhDong, hangDuLieu) {
+    const urlAPI = `https://${cauHinh.region}.appsheet.com/api/v2/apps/${cauHinh.appId}/tables/${cauHinh.tableName}/Action`;
+    const thongTinGoi = {
+        Action: hanhDong,
+        Properties: {
+            Locale: "vi-VN",
+            Timezone: "Asia/Ho_Chi_Minh"
+        },
+        Rows: hangDuLieu
+    };
 
-				try {
-					const phanHoi = await fetch(urlAPI, {
-						method: "POST",
-						headers: {
-							ApplicationAccessKey: cauHinh.accessKey,
-							"Content-Type": "application/json"
-						},
-						body: JSON.stringify(thongTinGoi)
-					});
+    try {
+        const phanHoi = await fetch(urlAPI, {
+            method: "POST",
+            headers: {
+                ApplicationAccessKey: cauHinh.accessKey,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(thongTinGoi)
+        });
 
-					if (!phanHoi.ok) throw new Error(`HTTP error! status: ${phanHoi.status}`);
-					return await phanHoi.json();
-				} catch (loi) {
-					console.error("Lỗi gọi API:", loi);
-					throw loi;
-				}
-			}
+        // Lấy response text trước
+        const responseText = await phanHoi.text();
+        
+        if (!phanHoi.ok) {
+            throw new Error(`Lỗi API (${phanHoi.status}): ${responseText}`);
+        }
+
+        // Kiểm tra nếu response rỗng
+        if (!responseText) {
+            // Nếu là action Edit và response rỗng, có thể coi như thành công
+            if (hanhDong === "Edit") {
+                return { success: true };
+            }
+            return [];
+        }
+
+        // Thử parse JSON
+        try {
+            return JSON.parse(responseText);
+        } catch (jsonError) {
+            console.error("Response không phải JSON hợp lệ:", responseText);
+            throw new Error(`Response không hợp lệ: ${responseText}`);
+        }
+    } catch (loi) {
+        console.error("Chi tiết lỗi gọi API:", loi);
+        throw new Error(`Lỗi khi gọi API: ${loi.message}`);
+    }
+}
 
 			async function layThongTinKhachHang(maKhachHang) {
 				try {
@@ -718,39 +739,59 @@
             }, tocDoCapNhat);
         }
 
-			async function ketThucQuay(nguoiTrungGiai, giaiDaChon) {
-				const thongTinTrungGiai = nguoiTrungGiai.Values || nguoiTrungGiai;
-				const amThanhQuay = document.getElementById("amThanhQuaySo");
-				const amThanhChucMung = document.getElementById("amThanhChucMung");
+async function ketThucQuay(nguoiTrungGiai, giaiDaChon) {
+    const thongTinTrungGiai = nguoiTrungGiai.Values || nguoiTrungGiai;
+    const amThanhQuay = document.getElementById("amThanhQuaySo");
+    const amThanhChucMung = document.getElementById("amThanhChucMung");
 
-				amThanhQuay.pause();
-				amThanhQuay.currentTime = 0;
+    amThanhQuay.pause();
+    amThanhQuay.currentTime = 0;
 
-				try {
-					const now = new Date();
-					const gmt7Time = new Date(now.getTime() + (7 * 60 * 60 * 1000));
-					const ngayCapNhat = gmt7Time.toISOString();
+    try {
+        <!-- const now = new Date(); -->
+        <!-- const gmt7Time = new Date(now.getTime() + (7 * 60 * 60 * 1000)); -->
+        <!-- const ngayCapNhat = gmt7Time.toISOString(); -->
+		
+		
+		const now = new Date();
+const gmt7Time = new Date(now.getTime());
+gmt7Time.setHours(gmt7Time.getHours() + 7); // Cộng thêm 7 giờ theo GMT+7
 
-					await goiAPI("Edit", [{
-						idMaSoQuayThuong: thongTinTrungGiai.idMaSoQuayThuong,
-						KetQuaQuay: giaiDaChon,
-						NgayCapNhat: ngayCapNhat,
-						TinhTrangQuay: "Y"
-					}]);
+const ngayCapNhat = gmt7Time.toISOString().slice(0, 19).replace("T", " "); // Định dạng 'YYYY-MM-DD HH:MM:SS'
 
-					const thongTinKhachHang = await layThongTinKhachHang(thongTinTrungGiai.MaKhachHang);
-					amThanhChucMung.play();
-					hienThiChucMung(nguoiTrungGiai, thongTinKhachHang);
+		
+		
+		
+		
+		
+		
 
-					await layDuLieu();
-				} catch (loi) {
-					console.error("Lỗi khi cập nhật kết quả:", loi);
-					alert("Có lỗi xảy ra khi cập nhật kết quả quay thưởng!");
-				} finally {
-					dangQuay = false;
-					document.getElementById("nutQuay").disabled = false;
-				}
-			}
+        // Đơn giản hóa dữ liệu cập nhật
+        const duLieuCapNhat = [{
+            idMaSoQuayThuong: thongTinTrungGiai.idMaSoQuayThuong,
+            KetQuaQuay: giaiDaChon,
+            NgayCapNhat: ngayCapNhat,
+            TinhTrangQuay: "Y" 
+        }];
+
+        // Gọi API cập nhật
+        await goiAPI("Edit", duLieuCapNhat);
+
+        // Lấy thông tin khách hàng và hiển thị kết quả
+        const thongTinKhachHang = await layThongTinKhachHang(thongTinTrungGiai.MaKhachHang);
+        amThanhChucMung.play();
+        hienThiChucMung(nguoiTrungGiai, thongTinKhachHang);
+
+        // Cập nhật lại danh sách
+        await layDuLieu();
+    } catch (loi) {
+        console.error("Chi tiết lỗi khi cập nhật kết quả:", loi);
+        alert("Có lỗi xảy ra khi cập nhật kết quả quay thưởng: " + loi.message);
+    } finally {
+        dangQuay = false;
+        document.getElementById("nutQuay").disabled = false;
+    }
+}
 
 			function maskPhoneNumber(phone) {
 				if (!phone) return "Không xác định";
