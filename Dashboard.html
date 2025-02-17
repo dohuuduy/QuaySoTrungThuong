@@ -1,27 +1,27 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - NHA KHOA THANH TRIỀU</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Dashboard - NHA KHOA THANH TRIỀU</title>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+		<style>
+			:root {
             --primary-color: #008A3C;
             --contrast-color: #ffffff;
             --accent-color: #F8F9FA;
             --highlight-color: #FFD700;
-        }
-
-        body {
+			}
+			
+			body {
             background-color: var(--accent-color);
             font-family: 'Poppins', sans-serif;
             overflow-x: hidden;
-        }
-
-        .sidebar {
+			}
+			
+			.sidebar {
             background-color: var(--primary-color);
             width: 70px;
             position: fixed;
@@ -33,35 +33,35 @@
             transition: width 0.3s ease;
             overflow: hidden;
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar:hover {
+			}
+			
+			.sidebar:hover {
             width: 250px;
-        }
-
-        .main-content {
+			}
+			
+			.main-content {
             margin-left: 70px;
             padding: 20px;
             padding-top: 60px;
             transition: margin-left 0.3s ease;
-        }
-
-        .sidebar-header img {
+			}
+			
+			.sidebar-header img {
             max-width: 30px;
             max-height: 30px;
             object-fit: contain;
             border-radius: 50%;
             transition: transform 0.3s ease;
-        }
-
-        .sidebar-header {
+			}
+			
+			.sidebar-header {
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 1.5rem 0;
-        }
-
-        .sidebar-header .logo-container {
+			}
+			
+			.sidebar-header .logo-container {
             width: 50px;
             height: 50px;
             background-color: white;
@@ -70,38 +70,38 @@
             justify-content: center;
             align-items: center;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .nav-link {
+			}
+			
+			.nav-link {
             color: var(--contrast-color);
             padding: 0.8rem 1rem;
             margin: 0.2rem 0;
             white-space: nowrap;
             position: relative;
             transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        .nav-link:hover {
+			}
+			
+			.nav-link:hover {
             background-color: rgba(255, 255, 255, 0.1);
             color: var(--highlight-color);
-        }
-
-        .nav-link i {
+			}
+			
+			.nav-link i {
             width: 20px;
             text-align: center;
             margin-right: 1rem;
-        }
-
-        .nav-link span {
+			}
+			
+			.nav-link span {
             opacity: 0;
             transition: opacity 0.3s ease;
-        }
-
-        .sidebar:hover .nav-link span {
+			}
+			
+			.sidebar:hover .nav-link span {
             opacity: 1;
-        }
-
-        .navbar {
+			}
+			
+			.navbar {
             position: fixed;
             top: 0;
             right: 0;
@@ -110,52 +110,52 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             z-index: 1000;
             transition: left 0.3s ease;
-        }
-
-        .sidebar:hover + .navbar {
+			}
+			
+			.sidebar:hover + .navbar {
             left: 250px;
-        }
-
-        .navbar-brand {
+			}
+			
+			.navbar-brand {
             color: var(--primary-color);
             font-weight: bold;
             font-size: 1.5rem;
-        }
-
-        .card {
+			}
+			
+			.card {
             border: none;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             border-radius: 15px;
             background-color: var(--contrast-color);
             height: 100%;
-        }
-
-        .card:hover {
+			}
+			
+			.card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .card i {
+			}
+			
+			.card i {
             font-size: 2rem;
             margin-bottom: 1rem;
             color: var(--primary-color);
-        }
-
-        .card h3 {
+			}
+			
+			.card h3 {
             font-size: 2rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
             color: var(--primary-color);
-        }
-
-        .card p {
+			}
+			
+			.card p {
             font-size: 1rem;
             color: #666;
             margin-bottom: 0;
-        }
-
-        .loading {
+			}
+			
+			.loading {
             display: none;
             position: fixed;
             top: 50%;
@@ -165,9 +165,9 @@
             background-color: rgba(255, 255, 255, 0.8);
             padding: 2rem;
             border-radius: 10px;
-        }
-
-        .table-container {
+			}
+			
+			.table-container {
             width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
@@ -176,22 +176,22 @@
             border-radius: 15px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             margin-top: 2rem;
-        }
-
-        .winners-table {
+			}
+			
+			.winners-table {
             width: 100%;
             min-width: 800px;
             margin: 0;
             border-collapse: separate;
             border-spacing: 0;
-        }
-
-        .winners-table thead {
+			}
+			
+			.winners-table thead {
             background-color: var(--primary-color);
             color: white;
-        }
-
-        .winners-table th {
+			}
+			
+			.winners-table th {
             position: sticky;
             top: 0;
             z-index: 2;
@@ -199,287 +199,297 @@
             font-weight: 500;
             text-align: left;
             border: none;
-        }
-
-        .winners-table td {
+			}
+			
+			.winners-table td {
             padding: 12px 15px;
             border-bottom: 1px solid #eee;
-        }
-
-        .winners-table tbody tr:last-child td {
+			}
+			
+			.winners-table tbody tr:last-child td {
             border-bottom: none;
-        }
-
-        .winners-table tbody tr:hover {
+			}
+			
+			.winners-table tbody tr:hover {
             background-color: rgba(0, 138, 60, 0.1);
-        }
-
-        .table-title {
+			}
+			
+			.table-title {
             padding: 15px;
             margin: 0;
             color: var(--primary-color);
             font-size: 1.25rem;
             font-weight: 600;
-        }
-
-        @media screen and (max-width: 768px) {
+			}
+			
+			@media screen and (max-width: 768px) {
             .main-content {
-                padding: 15px;
-                padding-top: 70px;
+			padding: 15px;
+			padding-top: 70px;
             }
-
+			
             .card {
-                margin-bottom: 1rem;
-                padding: 1rem !important;
+			margin-bottom: 1rem;
+			padding: 1rem !important;
             }
-
+			
             .card h3 {
-                font-size: 1.5rem;
+			font-size: 1.5rem;
             }
-
+			
             .card p {
-                font-size: 0.9rem;
+			font-size: 0.9rem;
             }
-
+			
             .navbar-brand {
-                font-size: 1.2rem;
+			font-size: 1.2rem;
             }
-
+			
             .table-container {
-                margin: 1rem -15px;
-                border-radius: 0;
+			margin: 1rem -15px;
+			border-radius: 0;
             }
-
+			
             .table-container::before {
-                content: '← Vuốt ngang để xem thêm →';
-                position: absolute;
-                top: -25px;
-                left: 0;
-                width: 100%;
-                text-align: center;
-                font-size: 0.8rem;
-                color: #666;
-                padding: 5px;
+			content: '← Vuốt ngang để xem thêm →';
+			position: absolute;
+			top: -25px;
+			left: 0;
+			width: 100%;
+			text-align: center;
+			font-size: 0.8rem;
+			color: #666;
+			padding: 5px;
             }
-
+			
             .winners-table th,
             .winners-table td {
-                white-space: nowrap;
+			white-space: nowrap;
             }
-
+			
             .row {
-                margin-right: -10px;
-                margin-left: -10px;
+			margin-right: -10px;
+			margin-left: -10px;
             }
-
+			
             .col-md-4 {
-                padding-right: 10px;
-                padding-left: 10px;
+			padding-right: 10px;
+			padding-left: 10px;
             }
-        }
+			}
 		</style>
-</head>
-<body>
-    <nav class="navbar">
-        <div class="container-fluid">
-            <div class="ms-auto">
-                <span class="navbar-brand">NHA KHOA THANH TRIỀU</span>
-            </div>
-        </div>
-    </nav>
-
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <div class="logo-container">
-                <img src="thanh_trieu_logo.png" alt="Logo" class="img-fluid">
-            </div>
-        </div>
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link" href="khachhangtracuu.html" title="Tra cứu mã dự thưởng">
-                    <i class="fas fa-search"></i>
-                    <span>Tra cứu mã dự thưởng</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="danh_sach_ma_du_thuong.html" title="Danh sách mã dự thưởng">
-                    <i class="fas fa-list"></i>
-                    <span>Ds Mã dự thưởng</span>
-                </a>
-            </li>
-            <li class="nav-item mt-auto">
-                <a class="nav-link" href="#" id="btnQuaySo" title="Quay số">
-                    <i class="fas fa-dice"></i>
-                    <span>Quay số</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-
-    <div class="main-content">
-        <div class="loading" id="loading">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Đang tải...</span>
-            </div>
-        </div>
-
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card text-center p-4">
-                    <i class="fas fa-users"></i>
-                    <h3 id="tongKhachHang">0</h3>
-                    <p>Tổng số khách hàng</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card text-center p-4">
-                    <i class="fas fa-ticket-alt"></i>
-                    <h3 id="tongMaDuThuong">0</h3>
-                    <p>Tổng số mã dự thưởng</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card text-center p-4">
-                    <i class="fas fa-gift"></i>
-                    <h3 id="giaiThuongPhat">0</h3>
-                    <p>Số giải thưởng đã phát</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="table-container">
-            <h3 class="table-title" id="winnersTitle">Danh sách người trúng thưởng của năm ...</h3>
-            <table class="winners-table">
-                <thead>
-                    <tr>
-                        <th>STT</th>
-                        <th>Mã khách hàng</th>
-                        <th>Tên khách hàng</th>
-                        <th>Số điện thoại</th>
-                        <th>Mã giải thưởng</th>
-                        <th>Ngày cập nhật</th>
-                    </tr>
-                </thead>
-                <tbody id="winnersList">
-                    <!-- Dữ liệu sẽ được thêm vào đây bằng JavaScript -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-     <script>
-        const appId = '1aa9c9a1-1792-412c-b21a-cceeeb78c269';
-        const accessKey = 'V2-qMcxL-PdTKn-6Y26p-LyQgo-tS9t9-vxeni-RGFOK-RkLMu';
-        const region = 'www';
-        const usersTableName = 'MaSoQuayThuong';
-        const customersTableName = 'KhachHang';
-
-        async function apiRequest(tableName, selector = {}) {
-            const apiUrl = `https://${region}.appsheet.com/api/v2/apps/${appId}/tables/${tableName}/Action`;
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'ApplicationAccessKey': accessKey,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        Action: "Find",
-                        Properties: {
-                            Locale: 'vi-VN',
-                            Timezone: 'Asia/Ho_Chi_Minh'
-                        },
-                        Selector: selector
-                    })
-                });
-                if (!response.ok) {
-                    throw new Error(`Lỗi HTTP! Trạng thái: ${response.status}`);
-                }
-                return await response.json();
-            } catch (error) {
-                console.error('Lỗi API:', error);
-                throw error;
-            }
-        }
-
-        function formatNumber(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-        }
-
-        async function fetchData() {
-            try {
-                document.getElementById('loading').style.display = 'block';
-                const [customersData, usersData] = await Promise.all([
+	</head>
+	<body>
+		<nav class="navbar">
+			<div class="container-fluid">
+				<div class="ms-auto">
+					<span class="navbar-brand">NHA KHOA THANH TRIỀU</span>
+				</div>
+			</div>
+		</nav>
+		
+		<div class="sidebar">
+			<div class="sidebar-header">
+				<div class="logo-container">
+					<img src="thanh_trieu_logo.png" alt="Logo" class="img-fluid">
+				</div>
+			</div>
+			<ul class="nav flex-column">
+				<li class="nav-item">
+					<a class="nav-link" href="khachhangtracuu.html" title="Tra cứu mã dự thưởng">
+						<i class="fas fa-search"></i>
+						<span>Tra cứu mã dự thưởng</span>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="danh_sach_ma_du_thuong.html" title="Danh sách mã dự thưởng">
+						<i class="fas fa-list"></i>
+						<span>Ds Mã dự thưởng</span>
+					</a>
+				</li>
+				<li class="nav-item mt-auto">
+					<a class="nav-link" href="#" id="btnQuaySo" title="Quay số">
+						<i class="fas fa-dice"></i>
+						<span>Quay số</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+		
+		<div class="main-content">
+			<div class="loading" id="loading">
+				<div class="spinner-border text-primary" role="status">
+					<span class="visually-hidden">Đang tải...</span>
+				</div>
+			</div>
+			
+			<div class="row g-4">
+				<div class="col-md-4">
+					<div class="card text-center p-4">
+						<i class="fas fa-users"></i>
+						<h3 id="tongKhachHang">0</h3>
+						<p>Tổng số khách hàng</p>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="card text-center p-4">
+						<i class="fas fa-ticket-alt"></i>
+						<h3 id="tongMaDuThuong">0</h3>
+						<p>Tổng số mã dự thưởng</p>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="card text-center p-4">
+						<i class="fas fa-gift"></i>
+						<h3 id="giaiThuongPhat">0</h3>
+						<p>Số giải thưởng đã phát</p>
+					</div>
+				</div>
+			</div>
+			
+			<div class="table-container">
+				<h3 class="table-title" id="winnersTitle">Danh sách người trúng thưởng của năm ...</h3>
+				<table class="winners-table">
+					<thead>
+						<tr>
+							<th>STT</th>
+							<th>Mã khách hàng</th>
+							<th>Tên khách hàng</th>
+							<th>Số điện thoại</th>
+							<th>Mã giải thưởng</th>
+							<th>Ngày cập nhật</th>
+						</tr>
+					</thead>
+					<tbody id="winnersList">
+						<!-- Dữ liệu sẽ được thêm vào đây bằng JavaScript -->
+					</tbody>
+				</table>
+			</div>
+		</div>
+		
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+		<script>
+			const appId = '1aa9c9a1-1792-412c-b21a-cceeeb78c269';
+			const accessKey = 'V2-qMcxL-PdTKn-6Y26p-LyQgo-tS9t9-vxeni-RGFOK-RkLMu';
+			const region = 'www';
+			const usersTableName = 'MaSoQuayThuong';
+			const customersTableName = 'KhachHang';
+			
+			async function apiRequest(tableName, selector = {}) {
+				const apiUrl = `https://${region}.appsheet.com/api/v2/apps/${appId}/tables/${tableName}/Action`;
+				try {
+					const response = await fetch(apiUrl, {
+						method: 'POST',
+						headers: {
+							'ApplicationAccessKey': accessKey,
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({
+							Action: "Find",
+							Properties: {
+								Locale: 'vi-VN',
+								Timezone: 'Asia/Ho_Chi_Minh'
+							},
+							Selector: selector
+						})
+					});
+					if (!response.ok) {
+						throw new Error(`Lỗi HTTP! Trạng thái: ${response.status}`);
+					}
+					return await response.json();
+					} catch (error) {
+					console.error('Lỗi API:', error);
+					throw error;
+				}
+			}
+			
+			function formatNumber(num) {
+				return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+			}
+			
+			async function fetchData() {
+				try {
+					document.getElementById('loading').style.display = 'block';
+					const [customersData, usersData] = await Promise.all([
                     apiRequest(customersTableName),
                     apiRequest(usersTableName)
-                ]);
-
-                document.getElementById('tongKhachHang').textContent = formatNumber(customersData.length);
-                document.getElementById('tongMaDuThuong').textContent = formatNumber(usersData.length);
-
-                const filteredData = usersData.filter(row => row.KetQuaQuay && row.KetQuaQuay.trim() !== '');
-                document.getElementById('giaiThuongPhat').textContent = formatNumber(filteredData.length);
-
-                // Lấy danh sách người trúng thưởng của năm gần nhất
-                const currentYear = new Date().getFullYear();
-                const winnersData = filteredData.filter(row => {
-                    const rowDate = new Date(row.NgayCapNhat);
-                    return rowDate.getFullYear() === currentYear;
-                });
-
-                // Cập nhật tiêu đề bảng với năm cụ thể
-                document.getElementById('winnersTitle').textContent = `Danh sách người trúng thưởng của năm ${currentYear}`;
-
-                // Kết hợp với bảng KhachHang để lấy tên khách hàng
-                const winnersList = winnersData.map((row, index) => {
-                    const customer = customersData.find(c => c.MaKhachHang === row.MaKhachHang);
-					const dienthoai = customersData.find(c => c.MaKhachHang === row.MaKhachHang);
-                    return {
-                        STT: index + 1,
-                        MaKhachHang: row.MaKhachHang,
-                        HoTenKhachHang: customer ? customer.HoTenKhachHang : 'Không xác định',
-						DienThoai: customer ? customer.SoDienThoai : 'Không xác định',
-                        MaGiaiThuong: row.MaGiaiThuong,
-                        NgayCapNhat: row.NgayCapNhat
-                    };
-                });
-
-                // Hiển thị danh sách người trúng thưởng
-                const winnersListElement = document.getElementById('winnersList');
-                winnersListElement.innerHTML = winnersList.map(winner => `
-                    <tr>
-                        <td>${winner.STT}</td>
-                        <td>${winner.MaKhachHang}</td>
-                        <td>${winner.HoTenKhachHang}</td>
-						<td>${winner.DienThoai}</td>
-                        <td>${winner.MaGiaiThuong}</td>
-                        <td>${new Date(winner.NgayCapNhat).toLocaleDateString()}</td>
-                    </tr>
-                `).join('');
-            } catch (error) {
-                document.getElementById('tongKhachHang').textContent = 'Lỗi';
-                document.getElementById('tongMaDuThuong').textContent = 'Lỗi';
-                document.getElementById('giaiThuongPhat').textContent = 'Lỗi';
-                console.error('Lỗi khi lấy dữ liệu:', error);
-            } finally {
-                document.getElementById('loading').style.display = 'none';
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchData();
-        });
-
-        document.getElementById('btnQuaySo').addEventListener('click', function(e) {
-            e.preventDefault();
-            const loggedIn = localStorage.getItem('isLoggedIn');
-            if (!loggedIn) {
-                window.location.href = 'Login.html';
-            } else {
-                window.location.href = 'quay_so_3.html';
-            }
-        });
-    </script>
-</body>
+					]);
+					
+					document.getElementById('tongKhachHang').textContent = formatNumber(customersData.length);
+					document.getElementById('tongMaDuThuong').textContent = formatNumber(usersData.length);
+					
+					const filteredData = usersData.filter(row => row.KetQuaQuay && row.KetQuaQuay.trim() !== '');
+					document.getElementById('giaiThuongPhat').textContent = formatNumber(filteredData.length);
+					
+					// Lấy danh sách người trúng thưởng của năm gần nhất
+					const currentYear = new Date().getFullYear();
+					const winnersData = filteredData.filter(row => {
+						const rowDate = new Date(row.NgayCapNhat);
+						return rowDate.getFullYear() === currentYear;
+					});
+					
+					// Cập nhật tiêu đề bảng với năm cụ thể
+					document.getElementById('winnersTitle').textContent = `Danh sách người trúng thưởng của năm ${currentYear}`;
+					
+					// Kết hợp với bảng KhachHang để lấy tên khách hàng
+					const winnersList = winnersData.map((row, index) => {
+						const customer = customersData.find(c => c.MaKhachHang === row.MaKhachHang);
+						const dienthoai = customersData.find(c => c.MaKhachHang === row.MaKhachHang);
+						return {
+							STT: index + 1,
+							MaKhachHang: row.MaKhachHang,
+							HoTenKhachHang: customer ? customer.HoTenKhachHang : 'Không xác định',
+							DienThoai: customer ? customer.SoDienThoai : 'Không xác định',
+							MaGiaiThuong: row.MaGiaiThuong,
+							NgayCapNhat: row.NgayCapNhat
+						};
+					});
+					
+					// Hiển thị danh sách người trúng thưởng
+					
+					
+					
+					// Hiển thị danh sách người trúng thưởng
+					const winnersListElement = document.getElementById('winnersList');
+					winnersListElement.innerHTML = winnersList.map(winner => {
+						// Mã hóa 3 số giữa của số điện thoại
+						const dienThoaiAn = winner.DienThoai.replace(/(\d{4})\d{3}(\d{3})/, '$1***$2');
+						
+						return `
+						<tr>
+						<td>${winner.STT}</td>
+						<td>${winner.MaKhachHang}</td>
+						<td>${winner.HoTenKhachHang}</td>
+						<td>${dienThoaiAn}</td>
+						<td>${winner.MaGiaiThuong}</td>
+						<td>${new Date(winner.NgayCapNhat).toLocaleDateString()}</td>
+						</tr>
+						`;
+					}).join('');
+				
+					} catch (error) {
+					document.getElementById('tongKhachHang').textContent = 'Lỗi';
+					document.getElementById('tongMaDuThuong').textContent = 'Lỗi';
+					document.getElementById('giaiThuongPhat').textContent = 'Lỗi';
+					console.error('Lỗi khi lấy dữ liệu:', error);
+					} finally {
+					document.getElementById('loading').style.display = 'none';
+				}
+			}
+			
+			document.addEventListener('DOMContentLoaded', () => {
+				fetchData();
+			});
+			
+			document.getElementById('btnQuaySo').addEventListener('click', function(e) {
+				e.preventDefault();
+				const loggedIn = localStorage.getItem('isLoggedIn');
+				if (!loggedIn) {
+					window.location.href = 'Login.html';
+					} else {
+					window.location.href = 'quay_so_3.html';
+				}
+			});
+		</script>
+	</body>
 </html>
